@@ -2,7 +2,7 @@ from typing import Any
 from django.db import models
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
-import uuid
+from django.contrib.auth import get_user_model
 # Create your models here.
 
 
@@ -34,7 +34,8 @@ class CustomUserManager(UserManager):
 class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(blank=True, default='', unique=True)
     name = models.CharField(max_length=255, blank=True, default='')
-
+    avatar = models.ImageField(
+        upload_to='images/avatar/', blank=True, max_length=100)
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -54,3 +55,41 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_name(self):
         return self.name
+
+
+class Playlist(models.Model):
+    name = models.CharField(max_length=255, default='')
+    compositions = models.ManyToManyField('Composition', blank=True)
+    image = models.ImageField(
+        upload_to='images/cover/', blank=True, max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.name
+
+
+class Composition(models.Model):
+    user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
+    name = models.CharField(max_length=255, default='')
+    category = models.CharField(max_length=255, default='')
+    time = models.DurationField()
+    text = models.TextField()
+    image = models.ImageField(
+        upload_to='images/cover/', blank=True, max_length=100)
+    style = models.CharField(max_length=255, default='')
+    audio_file = models.FileField(upload_to='audio/')
+    playlist_id = models.ForeignKey(
+        Playlist, on_delete=models.CASCADE, null=True, blank=True)
+
+    def __str__(self):
+        return self.name
+
+
+class History(models.Model):
+    time_of_listening = models.DateTimeField(auto_now_add=True)
+    compositions = models.ManyToManyField('Composition', blank=True)
+
+    def __str__(self):
+        compositions_names = ", ".join(
+            [composition.name for composition in self.compositions.all()])
+        return f"Listening to: {compositions_names} at {self.time_of_listening}" if compositions_names else f"Listening at {self.time_of_listening}"
