@@ -2,8 +2,8 @@ from typing import Any
 from django.db import models
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
-from django.contrib.auth import get_user_model
-# Create your models here.
+from django.contrib.auth import get_user_model  # Добавьте этот импорт
+import uuid
 
 
 class CustomUserManager(UserManager):
@@ -32,6 +32,7 @@ class CustomUserManager(UserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(blank=True, default='', unique=True)
     name = models.CharField(max_length=255, blank=True, default='')
     avatar = models.ImageField(
@@ -58,6 +59,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Playlist(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255, default='')
     compositions = models.ManyToManyField('Composition', blank=True)
     image = models.ImageField(
@@ -69,6 +71,7 @@ class Playlist(models.Model):
 
 
 class Composition(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default='')
     category = models.CharField(max_length=255, default='')
@@ -86,6 +89,7 @@ class Composition(models.Model):
 
 
 class History(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     time_of_listening = models.DateTimeField(auto_now_add=True)
     compositions = models.ManyToManyField('Composition', blank=True)
 
