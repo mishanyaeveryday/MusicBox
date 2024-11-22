@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .models import User, Playlist, Composition, History
@@ -65,7 +66,7 @@ def create_playlist(request):
 def playlist_detail(request, pk):
     try:
         playlist = Playlist.objects.get(pk=pk)
-    except User.DoesNotExist:
+    except Playlist.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
@@ -79,5 +80,82 @@ def playlist_detail(request, pk):
         return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         playlist.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_compositions(request):
+    compositions = Composition.objects.all()
+    serializer = PlaylistSerializer(compositions, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def create_composition(request):
+    serializer = CompositionSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def composition_detail(request, pk):
+    try:
+        composition = Composition.objects.get(pk=pk)
+    except Composition.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = CompositionSerializer(composition)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = CompositionSerializer(composition, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        composition.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_history(request):
+    histories = History.objects.all()
+    serializer = HistorySerializer(histories, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['POST'])
+def create_history(request):
+    serializer = HistorySerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def history_detail(request, pk):
+    try:
+        history = History.objects.get(pk=pk)
+    except History.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = HistorySerializer(history)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = HistorySerializer(history, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        history.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

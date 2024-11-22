@@ -8,4 +8,10 @@ urlpatterns = [
     path('playlists/', get_playlists, name='get_playlists'),
     path('playlists/create/', create_playlist, name='create_playlist'),
     path('playlists/<uuid:pk>/', playlist_detail, name='playlist_detail'),
+    path('compositions/', get_compositions, name='get_compositions'),
+    path('compositions/create/', create_composition, name='create_composition'),
+    path('compositions/<uuid:pk>/', composition_detail, name='composition_detail'),
+    path('history/', get_history, name='get_history'),
+    path('history/create/', create_history, name='create_history'),
+    path('history/<uuid:pk>/', history_detail, name='history_detail'),
 ]
