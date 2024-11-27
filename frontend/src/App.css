@@ -1,55 +1,56 @@
 @font-face {
-    font-family: 'Philosopher';  
-    src: url('../fonts/Philosopher/Philosopher-Regular.ttf') format('truetype');  
-    font-weight: 400; 
-    font-style: normal;  
-    color: black;
-  }
-  
-  @font-face {
-    font-family: 'Arsenal';
-    src: url('../fonts/Arsenal/Arsenal-Regular.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    color: black;
-  }
-  
-  @font-face {
-    font-family: 'Gotic';
-    src: url('../fonts/Dela_Gothic_One/DelaGothicOne-Regular.ttf') format('truetype');
-    font-weight: 700;
-    font-style: normal;
-    color: black;
-  }
-  
-  * {
-    box-sizing: border-box;
-    font-family: 'Philosopher' !important;
-  }
-  
-  html, body {
-    height: 100%;
-    width: 100%;
-    margin: 0;
-      color: black;
-  }
-  
-  .container {
-    justify-content: center; 
-    align-items: center;
-    width: 100%;
-    background-color: #ffffff; 
-  }
-  
-  .form {
-    text-align: center;
-    background: white;
-    color: black;
-    padding: 20px;
-    border-radius: 5px; 
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); 
-  }
-  
-  #root{
-    height: 100%;
-  }
+  font-family: 'Philosopher';
+  src: url('../fonts/Philosopher/Philosopher-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  color: black;
+}
+
+@font-face {
+  font-family: 'Arsenal';
+  src: url('../fonts/Arsenal/Arsenal-Regular.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  color: black;
+}
+
+@font-face {
+  font-family: 'Gotic';
+  src: url('../fonts/Dela_Gothic_One/DelaGothicOne-Regular.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  color: black;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Gotic' !important;
+}
+
+html,
+body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  color: black;
+}
+
+.container {
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  background-color: #ffffff;
+}
+
+.form {
+  text-align: center;
+  background: white;
+  color: black;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+#root {
+  height: 100%;
+}

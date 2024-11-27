@@ -13,8 +13,8 @@ export function NavbarDark() {
   return (
     <Navbar
       variant="gradient"
-      color="blue-gray"
-      className="from-gray-900 via-black to-gray-800 px-4 py-3"
+      color="red"
+      className="from-red-300 via-pink-500 to-pink-900 px-4 py-3"
       style={{ minWidth: "100%", borderRadius: "0" }}
     >
       <div className="flex items-center justify-between w-full">
@@ -25,7 +25,7 @@ export function NavbarDark() {
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
           <div className="flex gap-1 md:mr-4">
             <IconButton variant="text" color="white">
-              <HomeIcon className="h-6 w-6" />
+              <HomeIcon className="h-8 w-8" />
             </IconButton>
           </div>
           <div className="relative flex w-full gap-2 md:w-max">
@@ -43,9 +43,9 @@ export function NavbarDark() {
             </IconButton>
           </div>
           <div className="flex gap-1 md:ml-4">
-            <Badge content="" color="purple">
+            <Badge content="" color="teal">
               <IconButton variant="text" color="white">
-                <BellIcon className="h-6 w-6" />
+                <BellIcon className="h-8 w-8" />
               </IconButton>
             </Badge>
           </div>

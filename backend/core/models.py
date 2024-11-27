@@ -1,8 +1,9 @@
 from typing import Any
+import hashlib
 from django.db import models
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
-from django.contrib.auth import get_user_model  # Добавьте этот импорт
+from django.contrib.auth import get_user_model
 import uuid
 
 
@@ -10,7 +11,6 @@ class CustomUserManager(UserManager):
     def _create_user(self, email, password, **extra_fields):
         if not email:
             raise ValueError("You have not provided a valid e-mail address")
-
         email = self.normalize_email(email)
         user = self.model(email=email, **extra_fields)
         user.set_password(password)
