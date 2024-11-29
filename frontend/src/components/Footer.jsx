@@ -20,12 +20,11 @@ const currentYear = new Date().getFullYear();
 export default function Footer() {
   return (
     <footer
-  className="relative w-full bg-gradient-to-b from-gray-900 via-black to-gray-800 text-white"
->
+  className="relative w-full bg-gradient-to-b from-red-300 via-pink-500 to-pink-900 text-white">
   <div className="w-full px-8 pt-8">
     <div className="grid grid-cols-1 justify-between gap-4 md:grid-cols-2">
       <Typography variant="h5" className="mb-6 text-white">
-          MusicBox
+        Peach Note
       </Typography>
       <div className="grid grid-cols-3 justify-between gap-4">
         {LINKS.map(({ title, items }) => (
@@ -53,17 +52,17 @@ export default function Footer() {
         ))}
       </div>
     </div>
-    <div className="mt-12 flex w-full flex-col items-center justify-center border-t border-gray-700 py-4 md:flex-row md:justify-between">
+    <div className="mt-12 border-white flex w-full flex-col items-center justify-center border-t border-gray-700 py-4 md:flex-row md:justify-between">
       <Typography
         variant="small"
         className="mb-4 text-center font-normal opacity-80 md:mb-0"
       >
         &copy; {currentYear}{" "}
         <a
-          href="https://music-box/"
+          href="https://peach-note/"
           className="text-blue-400 hover:underline"
         >
-          MusicBox
+          Peach Note
         </a>
         . All Rights Reserved.
       </Typography>

@@ -1,25 +1,35 @@
 import {
   Navbar,
-  Typography,
+  Menu,
+  MenuList,
+  MenuItem,
+  MenuHandler,
+  Button,
   IconButton,
   Badge,
   Input,
 } from "@material-tailwind/react";
-import icon from '../assets/images/iconSmall.png';
+import icon from '../assets/images/iconS.png';
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { BellIcon, Cog6ToothIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/solid";
+import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/solid";
 
 export function NavbarDark() {
+  const [language, setLanguage] = useState("UKR");
+
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang);
+  };
   return (
     <Navbar
       variant="gradient"
       color="red"
       className="from-red-300 via-pink-500 to-pink-900 px-4 py-3"
-      style={{ minWidth: "100%", borderRadius: "0" }}
+      style={{ minWidth: "100%", borderRadius: "0"}}
     >
       <div className="flex items-center justify-between w-full">
         <Link to="/" className="flex items-center gap-1 md:mx-4">
-          <img style={{ width: "2rem" }} src={icon} alt="Логотип" />
+          <img style={{ width: "3rem" }} src={icon} alt="Логотип" />
         </Link>
 
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
@@ -57,6 +67,19 @@ export function NavbarDark() {
               <UserIcon className="h-8 w-8" />
             </IconButton>
           </div>
+          <Menu>
+            <MenuHandler>
+              <Button variant="text" color="blue-gray" className="flex items-center gap-1">
+                <span className="text-white text-sm font-bold">{language}</span>
+                <ChevronDownIcon className="h-4 w-4 text-white" />
+              </Button>
+            </MenuHandler>
+            <MenuList>
+              <MenuItem onClick={() => handleLanguageChange("ENG")}>English</MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("POL")}>Polski</MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("RUS")}>Русский</MenuItem>
+            </MenuList>
+          </Menu>
         </div>
       </div>
     </Navbar>
