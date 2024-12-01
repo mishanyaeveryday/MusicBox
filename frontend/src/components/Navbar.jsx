@@ -9,22 +9,24 @@ import {
   Badge,
   Input,
 } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 import icon from '../assets/images/iconS.png';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/solid";
 
 export function NavbarDark() {
-  const [language, setLanguage] = useState("UKR");
+  const [language, setLanguage] = useState("ENG");
+  const navigate = useNavigate();
 
   const handleLanguageChange = (lang) => {
     setLanguage(lang);
   };
   return (
     <Navbar
-      variant="gradient"
+      variant="solid"
       color="red"
-      className="from-red-300 via-pink-500 to-pink-900 px-4 py-3"
+      className="bg-[#FF7F50] px-4 py-3"
       style={{ minWidth: "100%", borderRadius: "0"}}
     >
       <div className="flex items-center justify-between w-full">
@@ -34,7 +36,7 @@ export function NavbarDark() {
 
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
           <div className="flex gap-1 md:mr-4">
-            <IconButton variant="text" color="white">
+            <IconButton onClick={() => navigate("/")} variant="text" color="white">
               <HomeIcon className="h-8 w-8" />
             </IconButton>
           </div>
@@ -53,8 +55,8 @@ export function NavbarDark() {
             </IconButton>
           </div>
           <div className="flex gap-1 md:ml-4">
-            <Badge content="" color="teal">
-              <IconButton variant="text" color="white">
+            <Badge content="" color="indigo">
+              <IconButton onClick={() => navigate("/notification")} variant="text" color="white">
                 <BellIcon className="h-8 w-8" />
               </IconButton>
             </Badge>
@@ -63,7 +65,7 @@ export function NavbarDark() {
 
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
           <div className="flex gap-1 md:mx-4">
-            <IconButton variant="text" color="white">
+            <IconButton onClick={() => navigate("/register")} variant="text" color="white">
               <UserIcon className="h-8 w-8" />
             </IconButton>
           </div>

@@ -6,8 +6,8 @@ const Home = () => {
   return (
     <div>
             <div className="intro back1">
-                <Typography color="teal" variant="h1">Peach Note</Typography>
-                <Typography variant="p">Ми є спільнота мешканців, що забезпечує комфорт, безпеку та ефективне управління будинком.</Typography>
+                <Typography color="indigo" variant="h1">Peach Note</Typography>
+                <Typography variant="paragraph">Ми є спільнота мешканців, що забезпечує комфорт, безпеку та ефективне управління будинком.</Typography>
             </div>
 
             <div className="wimg">
@@ -33,6 +33,11 @@ const Home = () => {
                             ОСББ «Enclave» — це ваш надійний партнер у питаннях управління житлом.
                             Вибираючи нас, ви обираєте стабільність, якість та безпеку для вашої родини.
                         </p>
+                    </div>
+                </div>
+                <div className="achievements-container">
+                    <div className="achievements">
+                        <Button variant="solid" color="indigo">Start Listning</Button>
                     </div>
                 </div>
             </div>
