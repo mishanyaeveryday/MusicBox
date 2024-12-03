@@ -1,4 +1,6 @@
 from django.shortcuts import render, get_object_or_404
+from django.core.mail import send_mail
+from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
@@ -27,6 +29,26 @@ def create_user(request):
         token = Token.objects.create(user=user)
         response_data = serializer.data
         response_data['token'] = token.key
+        send_mail(
+            subject='Token for authorization',
+            message=f"""Hello {user.name},
+
+Thank you for signing up at PeachNote! To complete your registration and activate your account, please use the following confirmation token:
+
+Confirmation Token: {token.key}
+
+Alternatively, you can click the link below to confirm your account:
+[Confirmation Link]
+
+If you did not register on our platform, please disregard this email.
+
+Best regards,
+The PeachNote Team
+""",
+            from_email='peachnote76@gmail.com',
+            recipient_list=[user.email],
+            fail_silently=False,
+        )
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
