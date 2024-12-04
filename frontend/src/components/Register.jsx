@@ -42,28 +42,28 @@ const RegisterForm = () => {
 
   return (
     <div className="enterD centered" style={{ textAlign: "center" }}>
-      <Card color="transparent" shadow={false} style={{ height: "100%", justifyContent:"center"}}>
-      <div className="flex items-center ml-10 mt-5">
-          <Link className='text-white' size='sm' style={{ fontFamily: 'Arsenal' }} to={'/'}>
-            Головна&nbsp;&nbsp;{'>'}&nbsp;&nbsp;
+      <Card color="transparent" shadow={false} style={{ height: "100%", justifyContent: "center" }}>
+        <div className="flex items-center ml-10 mt-5">
+          <Link className='text-teal-500' size='sm' style={{ fontFamily: 'Arsenal' }} to={'/'}>
+            Home&nbsp;&nbsp;{'>'}&nbsp;&nbsp;
           </Link>
-          <Link className='underline text-white' size='sm' style={{ fontFamily: 'Arsenal' }}>
-            Кабінет
+          <Link className='underline text-teal-500' size='sm' style={{ fontFamily: 'Arsenal' }}>
+            Register
           </Link>
         </div>
-      <Typography variant="h2" style={{ fontFamily: 'Philosopher' }} className="text-gray-50 p-10 font-thin">
-          СТВОРЕННЯ КАБІНЕТУ
+        <Typography variant="h2" style={{ fontFamily: 'Philosopher' }} className="text-indigo-900 pt-10 font-thin">
+          REGISTRATION
         </Typography>
         <center>
-          <form className="mt-8 mb-2 max-w-screen-lg" onSubmit={handleSubmit}>
+          <form className="px-24 mt-8 mb-2 max-w-screen-lg" onSubmit={handleSubmit}>
             <div className="mb-1 flex flex-col gap-6">
               <div className="mb-1 flex flex-col gap-6">
                 <Input type="text" size="lg"
-                  placeholder="Login"
-                  className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="login" value={formData.login} onChange={handleChange}  />
+                  placeholder="login"
+                  className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="login" value={formData.login} onChange={handleChange} />
                 <Input type="email" size="lg"
-                  placeholder="Email@email.com"
-                  className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="email" value={formData.email} onChange={handleChange}  />
+                  placeholder="example@email.com"
+                  className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="email" value={formData.email} onChange={handleChange} />
                 <Input type="password" size="lg"
                   placeholder="***********"
                   className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="password" value={formData.password} onChange={handleChange} />
@@ -72,19 +72,19 @@ const RegisterForm = () => {
                   className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} />
               </div>
             </div>
-            <Button color="indigo" className="mt-12 text-white text-2xl rounded-2xl font-thin" fullWidth style={{ fontFamily: 'Philosopher' }}  type="submit" variant="solid">
-              Підтвердити
+            <Button color="indigo" className="mt-12 text-white text-2xl rounded-2xl font-thin" fullWidth style={{ fontFamily: 'Philosopher' }} type="submit" variant="solid">
+              Continue
             </Button>
           </form>
           {message && <p style={{ color: message.includes("успешна") ? "green" : "red" }}>{message}</p>}
         </center>
         <div className="flex flex-col items-center mb-20">
-        <Link to="/login" className='mx-10 p-2 underline text-white' size='sm' style={{ fontFamily: 'Arsenal' }}>
-            <Button color="teal" className="mx-5' size='sm'" variant="text">
-               УВІЙТИ
+          <Link to="/login" className='p-2 underline text-white' style={{ fontFamily: 'Arsenal' }}>
+            <Button color="teal" className="mx-5" variant="text">
+              Login
             </Button>
           </Link>
-          </div>
+        </div>
       </Card>
     </div>
   );

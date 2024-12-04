@@ -10,7 +10,7 @@ import {
   Input,
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import icon from '../assets/images/iconS.png';
+import icon from '../assets/images/icon.png';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/solid";
@@ -27,11 +27,11 @@ export function NavbarDark() {
       variant="solid"
       color="red"
       className="bg-[#FF7F50] px-4 py-3"
-      style={{ minWidth: "100%", borderRadius: "0"}}
+      style={{ minWidth: "100%", borderRadius: "0" }}
     >
       <div className="flex items-center justify-between w-full">
         <Link to="/" className="flex items-center gap-1 md:mx-4">
-          <img style={{ width: "3rem" }} src={icon} alt="Логотип" />
+          <img style={{ width: "3rem" }} src={icon} alt="Logo" />
         </Link>
 
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
@@ -44,7 +44,7 @@ export function NavbarDark() {
             <Input
               type="search"
               color="white"
-              label="Что хочешь включить?"
+              label="What you want to listen?"
               className="pr-20"
               containerProps={{
                 className: "min-w-[288px]",
@@ -79,7 +79,7 @@ export function NavbarDark() {
             <MenuList>
               <MenuItem onClick={() => handleLanguageChange("ENG")}>English</MenuItem>
               <MenuItem onClick={() => handleLanguageChange("POL")}>Polski</MenuItem>
-              <MenuItem onClick={() => handleLanguageChange("RUS")}>Русский</MenuItem>
+              <MenuItem onClick={() => handleLanguageChange("UA")}>Українська</MenuItem>
             </MenuList>
           </Menu>
         </div>
