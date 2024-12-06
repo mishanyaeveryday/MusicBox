@@ -6,6 +6,7 @@ import Login from './components/Login';
 import Error from './components/Error';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
+import Verify from './components/Verify';
 import ScrollTop from './components/ScrollTop';
 import './App.css';
 import './index.css';
@@ -18,6 +19,8 @@ function App() {
         <Route path='/' element={<Home/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
+        <Route path='/verify' element={<Verify/>}/>
+
         <Route path='*' element={<Error/>}/>
       </Routes>
       </div>

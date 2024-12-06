@@ -64,7 +64,7 @@ export function NavbarDark() {
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
-          <div className="flex gap-1 md:mx-4">
+          <div className="flex gap-1 md:mx-1">
             <IconButton onClick={() => navigate("/register")} variant="text" color="white">
               <UserIcon className="h-8 w-8" />
             </IconButton>
@@ -72,7 +72,7 @@ export function NavbarDark() {
           <Menu>
             <MenuHandler>
               <Button variant="text" color="blue-gray" className="flex items-center gap-1">
-                <span className="text-white text-sm font-bold">{language}</span>
+                <span className="text-white text-sm">{language}</span>
                 <ChevronDownIcon className="h-4 w-4 text-white" />
               </Button>
             </MenuHandler>

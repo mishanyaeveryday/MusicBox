@@ -60,7 +60,7 @@ export default function Footer() {
         &copy; {currentYear}{" "}
         <a
           href="https://peach-note/"
-          className="text-blue-400 hover:underline"
+          className="text-indigo-900 hover:underline"
         >
           Peach Note
         </a>

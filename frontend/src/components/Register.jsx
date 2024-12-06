@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import '../design/Auth.css';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -44,10 +45,10 @@ const RegisterForm = () => {
     <div className="enterD centered" style={{ textAlign: "center" }}>
       <Card color="transparent" shadow={false} style={{ height: "100%", justifyContent: "center" }}>
         <div className="flex items-center ml-10 mt-5">
-          <Link className='text-teal-500' size='sm' style={{ fontFamily: 'Arsenal' }} to={'/'}>
+          <Link className='text-indigo-900' size='sm' style={{ fontFamily: 'Arsenal' }} to={'/'}>
             Home&nbsp;&nbsp;{'>'}&nbsp;&nbsp;
           </Link>
-          <Link className='underline text-teal-500' size='sm' style={{ fontFamily: 'Arsenal' }}>
+          <Link className='underline text-indigo-900' size='sm' style={{ fontFamily: 'Arsenal' }}>
             Register
           </Link>
         </div>
@@ -76,11 +77,11 @@ const RegisterForm = () => {
               Continue
             </Button>
           </form>
-          {message && <p style={{ color: message.includes("успешна") ? "green" : "red" }}>{message}</p>}
+          {message && <p style={{ color: message.includes("plus") ? "green" : "red" }}>{message}</p>}
         </center>
         <div className="flex flex-col items-center mb-20">
           <Link to="/login" className='p-2 underline text-white' style={{ fontFamily: 'Arsenal' }}>
-            <Button color="teal" className="mx-5" variant="text">
+            <Button color="indigo" className="mx-5" variant="text">
               Login
             </Button>
           </Link>
