@@ -1,5 +1,4 @@
 from typing import Any
-import hashlib
 from django.db import models
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
@@ -32,9 +31,11 @@ class CustomUserManager(UserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    username = models.CharField(unique=True, max_length=30)
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(blank=True, default='', unique=True)
     name = models.CharField(max_length=255, blank=True, default='')
+    surname = models.CharField(max_length=255, blank=True, default='')
     avatar = models.ImageField(
         upload_to='images/avatar/', blank=True, max_length=100)
     is_active = models.BooleanField(default=True)
