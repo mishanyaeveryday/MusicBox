@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import "../design/Home.css";
 import { Button, IconButton, Typography } from "@material-tailwind/react";
+import { Link } from "react-router-dom";
 import {
     Card,
     CardHeader,
@@ -9,7 +10,7 @@ import {
     Tooltip,
 } from "@material-tailwind/react";
 import '../design/Home.css';
-import { MagnifyingGlassIcon, PlusCircleIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
+import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
 const Library = (isEmptyPlaylists, isEmptyCompositors) => {
     return (
@@ -57,14 +58,50 @@ const Library = (isEmptyPlaylists, isEmptyCompositors) => {
 const Playlists = () => {
     return (
         <div className="h-full">
-            <Card className="h-full shadowHalf">
+            <Card className="h-full shadowHalf flex flex-col overflow-y-scroll">
                 <CardHeader floated={false} className="bg-0">
                 </CardHeader>
-                <CardBody className="text-center">
-                    <Composition />
+                <CardBody className="text-center flex flex-col">
+                   <Playlist/>
+                   <Playlist/>
+                   <Playlist/>
+                   <Playlist/>
                 </CardBody>
                 <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>
             </Card>
+        </div>
+    );
+};
+
+const Playlist = () => {
+    return (
+        <div>
+            <div className="relative">
+                <Typography variant="h6" className="text-white text-left ml-6">
+                    Name of Playlist
+                    <Link
+                        className="text-white hover:underline"
+                        size="sm"
+                        style={{
+                            fontFamily: "Arsenal",
+                            position: "absolute",
+                            right: 0,
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                        }}
+                    >
+                        Show all
+                    </Link>
+                </Typography>
+            </div>
+            <div className="text-center flex flex-row justify-between">
+                <Composition />
+                <Composition />
+                <Composition />
+                <Composition />
+                <Composition />
+                <Composition />
+            </div>
         </div>
     );
 };
@@ -79,24 +116,31 @@ const Compositor = () => {
 const Composition = () => {
     return (
         <div>
-            <Card className="mt-6 w-96">
-                <CardHeader color="" className="">
-                    <img className=''
-                        src="https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
-                        alt="card-image"
-                    />
-                </CardHeader>
-                <CardBody>
-                    <Typography variant="h5" color="" className="mb-2">
+            <Card className="w-46 shadowFull m-1 cursor-pointer hover:bg-gray-500/10">
+                <div className="relative">
+                    <CardHeader color="" className="-mt-0 mt-4">
+                        <img
+                            className="w-full"
+                            src="https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
+                            alt="card-image"
+                        />
+                        <IconButton
+                            size="sm"
+                            className="!absolute bottom-0 right-0 m-2"
+                        >
+                            <PlayIcon className="h-5 w-5"></PlayIcon>
+                        </IconButton>
+                    </CardHeader>
+                </div>
+                <CardBody className="p-1">
+                    <Typography variant="p" className="text-xs text-left">
                         Name
                     </Typography>
-                    <Typography>
+                    <Typography variant="p" className="text-xs text-left">
                         Compositor
                     </Typography>
                 </CardBody>
-                <CardFooter className="pt-0">
-                    <Button>Play</Button>
-                </CardFooter>
+                <CardFooter className="p-1"></CardFooter>
             </Card>
         </div>
     );
