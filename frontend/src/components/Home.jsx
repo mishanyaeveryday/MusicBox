@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect,useState } from 'react';
 import "../design/Home.css";
 import { Button, IconButton, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
@@ -9,6 +9,7 @@ import {
     CardFooter,
     Tooltip,
 } from "@material-tailwind/react";
+import Composition from './Composition';
 import '../design/Home.css';
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
@@ -56,16 +57,27 @@ const Library = (isEmptyPlaylists, isEmptyCompositors) => {
 };
 
 const Playlists = () => {
+    const [playlists, setPlaylists] = useState([]);
+
+    useEffect(() => {
+        fetch('/api/playlists')
+            .then((res) => res.json())
+            .then((data) => setPlaylists(data));
+    }, []);
+
     return (
         <div className="h-full">
             <Card className="h-full shadowHalf flex flex-col overflow-y-scroll">
-                <CardHeader floated={false} className="bg-0">
-                </CardHeader>
+                <CardHeader floated={false} className="bg-0"></CardHeader>
                 <CardBody className="text-center flex flex-col">
-                   <Playlist/>
-                   <Playlist/>
-                   <Playlist/>
-                   <Playlist/>
+                    {playlists.map((playlist) => (
+                        <Playlist
+                            key={playlist.id}
+                            id={playlist.id}
+                            category={playlist.category}
+                            name={playlist.name}
+                        />
+                    ))}
                 </CardBody>
                 <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>
             </Card>
@@ -73,15 +85,23 @@ const Playlists = () => {
     );
 };
 
-const Playlist = () => {
+const Playlist = ({ id, category, name }) => {
+    const [compositions, setCompositions] = useState([]);
+
+    useEffect(() => {
+        fetch(`/api/playlists/${id}/compositions`)
+            .then((res) => res.json())
+            .then((data) => setCompositions(data));
+    }, [id]);
+
     return (
         <div>
             <div className="relative">
                 <Typography variant="h6" className="text-white text-left ml-6">
-                    Name of Playlist
+                    {name}
                     <Link
+                        to={`/playlist/${category}`}
                         className="text-white hover:underline"
-                        size="sm"
                         style={{
                             fontFamily: "Arsenal",
                             position: "absolute",
@@ -95,53 +115,10 @@ const Playlist = () => {
                 </Typography>
             </div>
             <div className="text-center flex flex-row justify-between">
-                <Composition />
-                <Composition />
-                <Composition />
-                <Composition />
-                <Composition />
-                <Composition />
+                {compositions.map((composition) => (
+                    <Composition key={composition.id} data={composition} />
+                ))}
             </div>
-        </div>
-    );
-};
-
-const Compositor = () => {
-    return (
-        <div>
-        </div>
-    );
-};
-
-const Composition = () => {
-    return (
-        <div>
-            <Card className="w-46 shadowFull m-1 cursor-pointer hover:bg-gray-500/10">
-                <div className="relative">
-                    <CardHeader color="" className="-mt-0 mt-4">
-                        <img
-                            className="w-full"
-                            src="https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=800&q=80"
-                            alt="card-image"
-                        />
-                        <IconButton
-                            size="sm"
-                            className="!absolute bottom-0 right-0 m-2"
-                        >
-                            <PlayIcon className="h-5 w-5"></PlayIcon>
-                        </IconButton>
-                    </CardHeader>
-                </div>
-                <CardBody className="p-1">
-                    <Typography variant="p" className="text-xs text-left">
-                        Name
-                    </Typography>
-                    <Typography variant="p" className="text-xs text-left">
-                        Compositor
-                    </Typography>
-                </CardBody>
-                <CardFooter className="p-1"></CardFooter>
-            </Card>
         </div>
     );
 };
