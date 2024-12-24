@@ -9,6 +9,9 @@ import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Verify from './components/Verify';
 import ScrollTop from './components/ScrollTop';
+import Notifications from './components/Notifications';
+import PrivateRoute from './components/PrivateRoute';
+import UserPage from './components/UserPage';
 import './App.css';
 import './index.css';
 function App() {
@@ -22,7 +25,13 @@ function App() {
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/verify' element={<Verify/>}/>
-
+        <Route path="/user/*" element={<PrivateRoute allowedRoles={['user', 'admin']}>
+              <Routes>
+                <Route path="*" element={<Error />}></Route>
+                <Route index element={<UserPage />} />
+                <Route path="notifications" element={<Notifications />} />
+              </Routes>
+            </PrivateRoute>} />
         <Route path='*' element={<Error/>}/>
       </Routes>
       </div>

@@ -17,7 +17,54 @@ import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } fr
 
 export function NavbarDark() {
   const [language, setLanguage] = useState("ENG");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userName, setUserName] = useState("");
+  const token = localStorage.getItem('token');
+  const accountId = localStorage.getItem('accountId');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const checkToken = async () => {
+      if (!token) {
+        setIsLoggedIn(false);
+        return;
+      }
+      try {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/check-token`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.data.valid) {
+          setIsLoggedIn(true);
+          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/me/${accountId}`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          let formattedUsername = "";
+          if (localStorage.getItem('role') == "admin") {
+            formattedUsername = "Admin";
+          }
+          else {
+            console.log(userResponse.data.person);
+            const { firstname, middlename } = userResponse.data.person;
+            formattedUsername = `${firstname} ${middlename}`;
+          }
+          setUserName(formattedUsername);
+        } else {
+          localStorage.removeItem("accountId");
+          localStorage.removeItem("token");
+          setIsLoggedIn(false);
+        }
+      } catch (error) {
+        setIsLoggedIn(false);
+      }
+    };
+
+    checkToken();
+  }, [token]);
+
 
   const handleLanguageChange = (lang) => {
     setLanguage(lang);
@@ -56,7 +103,13 @@ export function NavbarDark() {
           </div>
           <div className="flex gap-1 md:ml-4">
             <Badge content="" color="indigo">
-              <IconButton onClick={() => navigate("/notification")} variant="text" color="white">
+              <IconButton onClick={() => {
+                if (isLoggedIn) {
+                  navigate("/notifications");
+                } else {
+                  navigate("/login");
+                }
+              }} variant="text" color="white">
                 <BellIcon className="h-8 w-8" />
               </IconButton>
             </Badge>
