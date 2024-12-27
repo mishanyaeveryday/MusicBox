@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'core',
+    'corsheaders',
 ]
 
 AUTH_USER_MODEL = 'core.User'
@@ -53,6 +54,18 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'django.middleware.common.CommonMiddleware',
+]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:5173",  # frontend
+]
+
+
+CORS_ALLOW_HEADERS = [
+    'content-type',
+    'authorization',
 ]
 
 ROOT_URLCONF = 'backend.urls'
