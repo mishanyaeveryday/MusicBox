@@ -33,7 +33,7 @@ const Verify = () => {
 
   const handleKeyDown = (e, index) => {
     if (e.key === 'Backspace') {
-      e.preventDefault(); 
+      e.preventDefault();
 
       const newCode = [...fullCode];
 
@@ -58,7 +58,7 @@ const Verify = () => {
           newCode[index] = char;
         }
       });
-  
+
       setCode(newCode);
 
       const nextEmptyIndex = pastedData.length < 6 ? pastedData.length : 5;
@@ -72,7 +72,7 @@ const Verify = () => {
     try {
       const login = localStorage.getItem('login');
       const code = fullCode.join('');
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login/test_token/`, { code, login });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/login/test_token/`, { code, login });
       const { token, role, accounts } = response.data;
 
       localStorage.setItem('token', token);
@@ -105,12 +105,12 @@ const Verify = () => {
           </Link>
         </div>
         <Typography variant="h2" style={{ fontFamily: 'Philosopher' }} className="text-indigo-900 p-10 font-thin">
-        Personal data
+          Personal data
         </Typography>
         <center>
-        <Typography variant="div" style={{ fontFamily: 'Philosopher' }} className="text-black font-thin w-1/3">
-        We have sent you an mail to {email} for confirmation. Please enter the verification code below.
-        </Typography>
+          <Typography variant="div" style={{ fontFamily: 'Philosopher' }} className="text-black font-thin w-1/3">
+            We have sent you an mail to {email} for confirmation. Please enter the verification code below.
+          </Typography>
           <form className="mt-8 mb-2 w-1/3" onSubmit={handleVerifyCode}>
             <div className='container'>
               {fullCode.map((digit, index) => (
@@ -128,7 +128,7 @@ const Verify = () => {
               ))}
             </div>
             <Button color='indigo' className="mt-12 text-2xl rounded-2xl font-thin mb-20" fullWidth type="submit" style={{ fontFamily: 'Philosopher' }} variant="solid">
-             Confirm
+              Confirm
             </Button>
           </form>{message && <p>{message}</p>}</center>
       </Card>

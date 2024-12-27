@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import '../design/Auth.css';
 
 const LoginForm = () => {
@@ -13,7 +14,7 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login/`, { login, password });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/login/`, { login, password });
       setMessage(response.data.message);
       localStorage.setItem('login', login);
       localStorage.setItem('email', response.data.email);

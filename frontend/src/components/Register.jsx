@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Card, Input, Button, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import '../design/Auth.css';
 
 const RegisterForm = () => {
@@ -29,7 +30,7 @@ const RegisterForm = () => {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/create/`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/create/`, formData);
       if (response.data.success) {
         setMessage("Регистрация успешна!");
         navigate("/login");
