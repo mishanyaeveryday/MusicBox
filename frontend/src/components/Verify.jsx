@@ -72,7 +72,7 @@ const Verify = () => {
     try {
       const login = localStorage.getItem('login');
       const code = fullCode.join('');
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/verify-code`, { code, login });
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/login/test_token/`, { code, login });
       const { token, role, accounts } = response.data;
 
       localStorage.setItem('token', token);

@@ -1,7 +1,8 @@
-import React, { useEffect,useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import "../design/Home.css";
 import { Button, IconButton, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
     Card,
     CardHeader,
@@ -14,6 +15,7 @@ import '../design/Home.css';
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
 const Library = (isEmptyPlaylists, isEmptyCompositors) => {
+    const navigate = useNavigate();
     return (
         <div className="h-full">
             <Card className="h-full shadowHalf">
@@ -37,7 +39,7 @@ const Library = (isEmptyPlaylists, isEmptyCompositors) => {
                         <div className='flex flex-col text-left p-6 shadowFull'>
                             <Typography className='mp-2' variant='h5' color='white'>Create first playlist</Typography>
                             <Typography className='mb-2 ml-2' variant='h7'>We will help you</Typography>
-                            <Button className='w-56' color='white'>Create playlist</Button>
+                            <Button onClick={navigate('/createPlaylist')} className='w-56' color='white'>Create playlist</Button>
                         </div>
                     </>)}
                     {isEmptyCompositors ? (<>
@@ -60,7 +62,7 @@ const Playlists = () => {
     const [playlists, setPlaylists] = useState([]);
 
     useEffect(() => {
-        fetch('/api/playlists')
+        fetch('/playlists')
             .then((res) => res.json())
             .then((data) => setPlaylists(data));
     }, []);
@@ -89,7 +91,7 @@ const Playlist = ({ id, category, name }) => {
     const [compositions, setCompositions] = useState([]);
 
     useEffect(() => {
-        fetch(`/api/playlists/${id}/compositions`)
+        fetch(`/playlists/${id}/compositions`)
             .then((res) => res.json())
             .then((data) => setCompositions(data));
     }, [id]);

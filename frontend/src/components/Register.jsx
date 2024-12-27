@@ -29,7 +29,7 @@ const RegisterForm = () => {
     }
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/register`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/users/create/`, formData);
       if (response.data.success) {
         setMessage("Регистрация успешна!");
         navigate("/login");

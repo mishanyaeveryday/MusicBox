@@ -7,9 +7,13 @@ const Playlist = () => {
     const [compositions, setCompositions] = useState([]);
 
     useEffect(() => {
-        fetch(`/api/compositions?category=${category}`)
-            .then((res) => res.json())
-            .then((data) => setCompositions(data));
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/compositions?category=${category}`)
+            .then((response) => {
+                setCompositions(response.data);
+            })
+            .catch((error) => {
+                console.error('Error fetching compositions:', error);
+            });
     }, [category]);
 
     return (

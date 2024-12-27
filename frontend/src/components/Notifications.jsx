@@ -6,22 +6,29 @@ const Notifications = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch('/api/user/subscriptions')
-            .then((res) => res.json())
-            .then((data) => {
-                if (data?.subscriptions?.length > 0) {
-                    fetch(`/api/news?subscriptions=${data.subscriptions.join(',')}`)
-                        .then((res) => res.json())
-                        .then((newsData) => setNews(newsData));
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/subscriptions`)
+            .then((response) => {
+                const subscriptions = response.data?.subscriptions;
+                if (subscriptions?.length > 0) {
+                    axios.get(`${import.meta.env.VITE_BACKEND_URL}/news?subscriptions=${subscriptions.join(',')}`)
+                        .then((newsResponse) => {
+                            setNews(newsResponse.data);
+                        })
+                        .catch((error) => {
+                            console.error('Ошибка при загрузке новостей:', error);
+                            setNews([]);
+                        });
                 } else {
                     setNews([]);
                 }
             })
             .catch((error) => {
-                console.error("Ошибка при загрузке данных:", error);
+                console.error('Ошибка при загрузке подписок:', error);
                 setNews([]);
             })
-            .finally(() => setLoading(false));
+            .finally(() => {
+                setLoading(false);
+            });
     }, []);
 
     if (loading) {

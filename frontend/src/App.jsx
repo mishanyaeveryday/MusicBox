@@ -12,6 +12,7 @@ import ScrollTop from './components/ScrollTop';
 import Notifications from './components/Notifications';
 import PrivateRoute from './components/PrivateRoute';
 import UserPage from './components/UserPage';
+import CreatePlaylist from './components/CreatePlaylist';
 import './App.css';
 import './index.css';
 function App() {
@@ -29,6 +30,7 @@ function App() {
               <Routes>
                 <Route path="*" element={<Error />}></Route>
                 <Route index element={<UserPage />} />
+                <Route path="createPlaylist" element={<CreatePlaylist />} />
                 <Route path="notifications" element={<Notifications />} />
               </Routes>
             </PrivateRoute>} />
