@@ -9,7 +9,6 @@ from rest_framework import status
 from rest_framework.authtoken.models import Token
 from .models import User, Playlist, Composition, History
 from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer
-from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
@@ -20,7 +19,6 @@ def get_user(request):
     return Response(serializer.data)
 
 
-@csrf_exempt
 @api_view(['POST'])
 def create_user(request):
     serializer = UserSerializer(data=request.data)
@@ -52,7 +50,6 @@ The PeachNote Team
             fail_silently=False,
         )
         return Response(response_data, status=status.HTTP_201_CREATED)
-
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

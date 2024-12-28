@@ -22,23 +22,29 @@ const RegisterForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { password, confirmPassword } = formData;
+    const { password, confirmPassword, login, email } = formData;
 
     if (password !== confirmPassword) {
       setMessage("Пароли не совпадают");
       return;
     }
 
+    const dataToSend = {
+      username: login,
+      email,
+      password,
+    };
+
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/create/`, formData);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/create/`, dataToSend);
       if (response.data.success) {
-        setMessage("Регистрация успешна!");
+        setMessage("Registration successful!");
         navigate("/login");
       } else {
         setMessage(response.data.message);
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || "Ошибка регистрации пользователя");
+      setMessage(error.response?.data?.message || "User registration error");
     }
   };
 
