@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'core',
     'corsheaders',
+    'django_seed',
 ]
 
 AUTH_USER_MODEL = 'core.User'

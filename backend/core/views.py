@@ -134,7 +134,7 @@ def playlist_detail(request, pk):
 @api_view(['GET'])
 def get_compositions(request):
     compositions = Composition.objects.all()
-    serializer = PlaylistSerializer(compositions, many=True)
+    serializer = CompositionSerializer(compositions, many=True)
     return Response(serializer.data)
 
 
