@@ -55,7 +55,7 @@ The PeachNote Team
 
 @api_view(['POST'])
 def login(request):
-    user = get_object_or_404(User, username=request.data['username'])
+    user = get_object_or_404(User, username=request.data['login'])
     if not user.check_password(request.data['password']):
         return Response({"detail": "Not Found."}, status=status.HTTP_404_NOT_FOUND)
     token, created = Token.objects.get_or_create(user=user)

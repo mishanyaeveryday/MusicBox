@@ -30,14 +30,14 @@ export function NavbarDark() {
         return;
       }
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/check-token`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check-token`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         if (response.data.valid) {
           setIsLoggedIn(true);
-          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/me/${accountId}`, {
+          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me/${accountId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },
