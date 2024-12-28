@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Card, CardHeader, CardBody, Button, Typography, IconButton, Tooltip } from "@material-tailwind/react";
 import { PencilIcon, UserIcon } from "@heroicons/react/24/solid";
+import axios from "axios";
 
 const UserPage = () => {
     const [recentSongs, setRecentSongs] = useState([
@@ -25,7 +26,7 @@ const UserPage = () => {
                 </div>
                 <Tooltip content="Редактировать" placement="bottom">
                     <IconButton
-                        className="absolute right-0 bottom-0"
+                        className="!absolute right-0 bottom-0"
                         size="sm"
                         onClick={() => alert("Редактирование профиля")}
                     >

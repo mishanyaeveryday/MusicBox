@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import icon from '../assets/images/icon.png';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/solid";
 
 export function NavbarDark() {

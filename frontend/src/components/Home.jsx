@@ -12,6 +12,7 @@ import {
 } from "@material-tailwind/react";
 import Composition from './Composition';
 import '../design/Home.css';
+import axios from "axios";
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
 const Library = (isLoggedIn,isEmptyPlaylists, isEmptyCompositors) => {
