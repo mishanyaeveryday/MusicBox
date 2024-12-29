@@ -13,6 +13,7 @@ import { useNavigate } from "react-router-dom";
 import icon from '../assets/images/icon.png';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/solid";
 
 export function NavbarDark() {
@@ -30,14 +31,14 @@ export function NavbarDark() {
         return;
       }
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/auth/check-token`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/auth/check-token`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         if (response.data.valid) {
           setIsLoggedIn(true);
-          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/user/me/${accountId}`, {
+          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me/${accountId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

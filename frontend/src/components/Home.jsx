@@ -12,9 +12,10 @@ import {
 } from "@material-tailwind/react";
 import Composition from './Composition';
 import '../design/Home.css';
+import axios from "axios";
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
-const Library = (isEmptyPlaylists, isEmptyCompositors) => {
+const Library = (isLoggedIn,isEmptyPlaylists, isEmptyCompositors) => {
     const navigate = useNavigate();
     return (
         <div className="h-full">
@@ -26,7 +27,13 @@ const Library = (isEmptyPlaylists, isEmptyCompositors) => {
                         </IconButton>
                         <Typography variant="h3">My media library</Typography>
                         <IconButton variant="text" color="white" className="rounded">
-                            <PlusIcon className="h-6 w-6" />
+                            <PlusIcon onClick={() => {
+                                if (isLoggedIn) {
+                                    navigate("/createPlaylist");
+                                } else {
+                                    navigate("/login");
+                                }
+                            }}  className="h-6 w-6" />
                         </IconButton>
                     </div>
                 </CardHeader>
@@ -39,7 +46,13 @@ const Library = (isEmptyPlaylists, isEmptyCompositors) => {
                         <div className='flex flex-col text-left p-6 shadowFull'>
                             <Typography className='mp-2' variant='h5' color='white'>Create first playlist</Typography>
                             <Typography className='mb-2 ml-2' variant='h7'>We will help you</Typography>
-                            <Button onClick={navigate('/createPlaylist')} className='w-56' color='white'>Create playlist</Button>
+                            <Button onClick={() => {
+                                if (isLoggedIn) {
+                                    navigate("/createPlaylist");
+                                } else {
+                                    navigate("/login");
+                                }
+                            }} className='w-56' color='white'>Create playlist</Button>
                         </div>
                     </>)}
                     {isEmptyCompositors ? (<>
@@ -54,7 +67,7 @@ const Library = (isEmptyPlaylists, isEmptyCompositors) => {
                 </CardBody>
                 <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>
             </Card>
-        </div>
+        </div >
     );
 };
 
@@ -126,6 +139,52 @@ const Playlist = ({ id, category, name }) => {
 };
 
 const Home = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const token = localStorage.getItem('token');
+    const accountId = localStorage.getItem('accountId');
+    const navigate = useNavigate();
+  
+    useEffect(() => {
+      const checkToken = async () => {
+        if (!token) {
+          setIsLoggedIn(false);
+          return;
+        }
+        try {
+          const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/check-token`, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          if (response.data.valid) {
+            setIsLoggedIn(true);
+            const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/me/${accountId}`, {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            });
+            let formattedUsername = "";
+            if (localStorage.getItem('role') == "admin") {
+              formattedUsername = "Admin";
+            }
+            else {
+              console.log(userResponse.data.person);
+              const { firstname, middlename } = userResponse.data.person;
+              formattedUsername = `${firstname} ${middlename}`;
+            }
+            setUserName(formattedUsername);
+          } else {
+            localStorage.removeItem("accountId");
+            localStorage.removeItem("token");
+            setIsLoggedIn(false);
+          }
+        } catch (error) {
+          setIsLoggedIn(false);
+        }
+      };
+  
+      checkToken();
+    }, [token]);
     const [isEmptyPlaylists, setIsEmptyPlaylists] = useState(false);
     const [isEmptyCompositors, setIsEmptyCompositors] = useState(false);
     return (
@@ -133,7 +192,7 @@ const Home = () => {
             <div className="intro back1">
                 <div className="flex flex-row w-full">
                     <div className="w-1/3 h-full p-6">
-                        <Library isEmptyPlaylists={isEmptyPlaylists} isEmptyCompositors={isEmptyCompositors} />
+                        <Library isLoggedIn={isLoggedIn} isEmptyPlaylists={isEmptyPlaylists} isEmptyCompositors={isEmptyCompositors} />
                     </div>
                     <div className="w-2/3 h-full p-6">
                         <Playlists />

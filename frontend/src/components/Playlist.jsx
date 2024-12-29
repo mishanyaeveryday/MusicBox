@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, CardHeader, CardBody, CardFooter, Typography } from "@material-tailwind/react";
+import axios from "axios";
 
 const Playlist = () => {
     const { category } = useParams();
@@ -24,7 +25,7 @@ const Playlist = () => {
                         <Card className="h-full w-full shadowHalf">
                             <CardHeader floated={false} className="bg-0 text-center">
                                 <Typography variant="h3" className="text-center">
-                                    Playlist: {category}
+                                    {category}
                                 </Typography>
                             </CardHeader>
                             <CardBody className="text-center">

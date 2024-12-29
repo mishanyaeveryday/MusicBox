@@ -8,6 +8,7 @@ import {
   Typography,
   Alert,
 } from "@material-tailwind/react";
+import axios from "axios";
 import '../design/Auth.css';
 
 const Verify = () => {

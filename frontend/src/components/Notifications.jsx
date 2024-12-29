@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardBody, Typography } from "@material-tailwind/react";
+import axios from "axios";
 
 const Notifications = () => {
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/subscriptions`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/subscriptions`)
             .then((response) => {
                 const subscriptions = response.data?.subscriptions;
                 if (subscriptions?.length > 0) {
-                    axios.get(`${import.meta.env.VITE_BACKEND_URL}/news?subscriptions=${subscriptions.join(',')}`)
+                    axios.get(`${import.meta.env.VITE_BACKEND_URL}core/news?subscriptions=${subscriptions.join(',')}`)
                         .then((newsResponse) => {
                             setNews(newsResponse.data);
                         })
