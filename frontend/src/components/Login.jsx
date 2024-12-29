@@ -14,14 +14,19 @@ const LoginForm = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/login/`, { login, password });
-      setMessage(response.data.message);
-      localStorage.setItem('login', login);
-      localStorage.setItem('email', response.data.email);
+      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/login/`, {
+        username: login,
+        password
+      });
+
+      localStorage.setItem('token', response.data.token);
+
+      localStorage.setItem('email', response.data.user.email);
+
       navigate('/verify');
     } catch (error) {
       console.log(error);
-      setMessage(error.response?.data?.message || 'Ошибка входа');
+      setMessage(error.response?.data?.detail || 'Ошибка входа');
     }
   };
 
