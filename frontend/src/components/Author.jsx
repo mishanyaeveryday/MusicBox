@@ -2,23 +2,23 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Card, IconButton, CardBody, CardFooter, Typography, Button } from "@material-tailwind/react";
 import axios from "axios";
-import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/outline";
 
-const Playlist = () => {
-    const { category } = useParams();
+const Author = () => {
+    const { author } = useParams();
     const [compositions, setCompositions] = useState([]);
     const [playlistIcon, setPlaylistIcon] = useState("");
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/compositions?category=${category}`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/authors?author=${author}`)
             .then((response) => {
-                setCompositions(response.data.compositions || []);
                 setPlaylistIcon(response.data.icon || "");
+                setCompositions(response.data.compositions || []);
             })
             .catch((error) => {
-                console.error("Error fetching compositions:", error);
+                console.error("Error fetching author data:", error);
             });
-    }, [category]);
+    }, [author]);
 
     return (
         <div>
@@ -40,7 +40,7 @@ const Playlist = () => {
                         </div>
                         <div className="flex-1">
                             <Typography variant="h3" className="font-semibold text-gray-800">
-                                {category}
+                                {author}
                             </Typography>
                         </div>
                         <IconButton
@@ -68,4 +68,4 @@ const Playlist = () => {
     );
 };
 
-export default Playlist;
+export default Author;

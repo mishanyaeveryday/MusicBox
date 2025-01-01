@@ -12,7 +12,7 @@ const CreatePlaylist = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`/api/users/${userId}/playlists`)
+        axios.get(`core/users/${userId}/playlists`)
             .then((response) => {
                 const playlist = response.data;
                 setPlaylistName(playlist.name);
@@ -48,7 +48,7 @@ const CreatePlaylist = () => {
             image: playlistImage,
             compositions: addedCompositions,
         };
-        axios.put(`/api/playlists/${userId}`, updatedPlaylist)
+        axios.put(`core/playlists/${userId}`, updatedPlaylist)
             .then((response) => {
                 alert("Плейлист успешно обновлен");
             })

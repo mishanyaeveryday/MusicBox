@@ -2,6 +2,7 @@ import React from 'react';
 import {Routes, Route} from 'react-router-dom';
 import Home from './components/Home';
 import Playlist from './components/Playlist';
+import Author from './components/Author';
 import Register from './components/Register';
 import Login from './components/Login';
 import Error from './components/Error';
@@ -23,6 +24,7 @@ function App() {
       <Routes>
         <Route path='/' element={<Home/>}/>
         <Route path='/playlist/:category' element={<Playlist/>}/>
+        <Route path='/author/:author' element={<Author/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/verify' element={<Verify/>}/>

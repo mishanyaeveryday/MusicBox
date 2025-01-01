@@ -26,14 +26,14 @@ const Library = (isLoggedIn,isEmptyPlaylists, isEmptyCompositors) => {
                             <QueueListIcon className="h-6 w-6" />
                         </IconButton>
                         <Typography variant="h3">My media library</Typography>
-                        <IconButton variant="text" color="white" className="rounded">
-                            <PlusIcon onClick={() => {
+                        <IconButton onClick={() => {
                                 if (isLoggedIn) {
                                     navigate("/createPlaylist");
                                 } else {
                                     navigate("/login");
-                                }
-                            }}  className="h-6 w-6" />
+                                }}} variant="text" color="white" className="rounded">
+                            <PlusIcon
+                              className="h-6 w-6" />
                         </IconButton>
                     </div>
                 </CardHeader>
