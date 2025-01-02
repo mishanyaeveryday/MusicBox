@@ -1,5 +1,6 @@
 import React, { useEffect,useState } from 'react';
 import "../design/Home.css";
+import { usePlayer } from './PlayerContext';
 import { Button, IconButton, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -14,6 +15,8 @@ import '../design/Home.css';
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
 const Composition = () => {
+    const { playSong } = usePlayer();
+    const song ={ title: 'Song 1', src: 'song1.mp3' };
     return (
         <div>
             <Card className="w-46 shadowFull m-1 cursor-pointer hover:bg-gray-500/10">
@@ -26,7 +29,7 @@ const Composition = () => {
                         />
                         <IconButton
                             size="sm"
-                            className="!absolute bottom-0 right-0 m-2"
+                            className="!absolute bottom-0 right-0 m-2" onClick={() => playSong(song)}
                         >
                             <PlayIcon className="h-5 w-5"></PlayIcon>
                         </IconButton>

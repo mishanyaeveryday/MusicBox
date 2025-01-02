@@ -2,6 +2,7 @@ import React from 'react';
 import {Routes, Route} from 'react-router-dom';
 import Home from './components/Home';
 import Playlist from './components/Playlist';
+import Player from './components/Player';
 import Author from './components/Author';
 import Register from './components/Register';
 import Login from './components/Login';
@@ -9,7 +10,6 @@ import Error from './components/Error';
 import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Verify from './components/Verify';
-import ScrollTop from './components/ScrollTop';
 import Notifications from './components/Notifications';
 import PrivateRoute from './components/PrivateRoute';
 import UserPage from './components/UserPage';
@@ -39,8 +39,8 @@ function App() {
         <Route path='*' element={<Error/>}/>
       </Routes>
       </div>
+      <Player/>
       <Footer/>
-      <ScrollTop />
     </div>
   )
 }

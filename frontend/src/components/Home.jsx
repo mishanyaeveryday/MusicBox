@@ -93,6 +93,7 @@ const Playlists = () => {
                             name={playlist.name}
                         />
                     ))}
+                    <Composition />
                 </CardBody>
                 <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>
             </Card>

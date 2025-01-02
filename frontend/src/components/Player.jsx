@@ -1,120 +1,152 @@
 import React, { useRef, useState } from "react";
-import { Button, Typography } from "@material-tailwind/react";
-import { Transition } from "@headlessui/react";
+import { Card, Button, Typography, IconButton, Slider } from "@material-tailwind/react";
+import { PlayIcon, PauseIcon, XMarkIcon, ChevronDoubleRightIcon, ArrowPathRoundedSquareIcon, ChevronDoubleLeftIcon } from "@heroicons/react/24/solid";
+import { usePlayer } from "./PlayerContext";
 
-const AdvancedAudioPlayer = ({ songName, audioSrc, onClose }) => {
-  const audioRef = useRef(null);
-  const [progress, setProgress] = useState(0);
+const PlayerWrapper = () => {
+  const { isVisible, closePlayer } = usePlayer();
+
+  if (!isVisible) return null;
+
+  const currentSong = {
+    title: "Sample Song",
+    src: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+  };
+
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
   const [isPlaying, setIsPlaying] = useState(false);
 
-  const handlePlay = () => {
-    audioRef.current.play();
-    setIsPlaying(true);
+  const skipToPrevious = () => {
+    console.log("Skipping to previous track");
   };
 
-  const handlePause = () => {
-    audioRef.current.pause();
-    setIsPlaying(false);
+  const skipToNext = () => {
+    console.log("Skipping to next track");
+  };
+  
+  const [isRepeating, setIsRepeating] = useState(false);
+
+  const toggleRepeat = () => {
+    setIsRepeating(!isRepeating);
+    console.log(isRepeating ? "Repeat Off" : "Repeat On");
   };
 
-  const handleTimeUpdate = () => {
-    const currentTime = audioRef.current.currentTime;
-    const duration = audioRef.current.duration;
-    setProgress((currentTime / duration) * 100);
+  const togglePlayPause = () => {
+    const audioPlayer = document.getElementById("audio-player");
+    if (isPlaying) {
+      audioPlayer.pause();
+    } else {
+      audioPlayer.play();
+    }
+    setIsPlaying(!isPlaying);
   };
 
-  return (
-    <Transition
-      show={true}
-      enter="transition-opacity duration-300"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="transition-opacity duration-300"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
-      className="fixed bottom-0 left-0 w-full bg-white shadow-lg p-4 z-50"
-    >
-      <div className="flex items-center justify-between">
-        <div className="flex flex-col">
-          <Typography variant="h6" className="text-gray-800">
-            {songName || "No Song Selected"}
-          </Typography>
-          <audio ref={audioRef} src={audioSrc} onTimeUpdate={handleTimeUpdate} />
-        </div>
-        <div className="flex items-center gap-4">
-          {!isPlaying ? (
-            <Button
-              color="blue"
-              onClick={handlePlay}
-              className="rounded-full w-12 h-12 flex justify-center items-center"
-            >
-              ▶
-            </Button>
-          ) : (
-            <Button
-              color="red"
-              onClick={handlePause}
-              className="rounded-full w-12 h-12 flex justify-center items-center"
-            >
-              ❚❚
-            </Button>
-          )}
-          <Button
-            color="gray"
-            onClick={onClose}
-            className="rounded-full w-12 h-12 flex justify-center items-center"
-          >
-            ✖
-          </Button>
-        </div>
-      </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5 mt-4">
-        <div
-          className="bg-blue-500 h-2.5 rounded-full"
-          style={{ width: `${progress}%` }}
-        ></div>
-      </div>
-    </Transition>
-  );
-};
-
-const PlayerApp = () => {
-  const [isPlayerVisible, setIsPlayerVisible] = useState(false);
-  const [currentSong, setCurrentSong] = useState({ name: "", src: "" });
-
-  const handleOpenPlayer = (name, src) => {
-    setCurrentSong({ name, src });
-    setIsPlayerVisible(true);
+  const handleTimeUpdate = (event) => {
+    setCurrentTime(event.target.currentTime);
   };
 
-  const handleClosePlayer = () => {
-    setIsPlayerVisible(false);
-    setCurrentSong({ name: "", src: "" });
+  const handleLoadedMetadata = (event) => {
+    setDuration(event.target.duration);
+  };
+
+  const handleSeek = (event, newValue) => {
+    const audioPlayer = document.getElementById("audio-player");
+    if (audioPlayer && typeof newValue === "number" && newValue >= 0 && newValue <= duration) {
+      audioPlayer.currentTime = newValue;
+      setCurrentTime(newValue);
+    }
+  };
+
+  const handleVolumeChange = (event, newValue) => {
+    if (typeof newValue === "number" && newValue >= 0 && newValue <= 1) {
+      const audioPlayer = document.getElementById("audio-player");
+      if (audioPlayer) {
+        audioPlayer.volume = newValue;
+        setVolume(newValue);
+      }
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${minutes}:${secs < 10 ? "0" : ""}${secs}`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center">
-      <Button
-        color="blue"
-        onClick={() =>
-          handleOpenPlayer(
-            "Sample Song",
-            "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
-          )
-        }
-      >
-        Open Player
-      </Button>
+    <div className="rounded-xl fixed bottom-0 left-0 w-full shadowHalf text-white z-50">
+      <Card className="rounded-xl flex flex-col items-center justify-between px-6 py-4 shadowFull w-full text-white">
+        <div className="m-2 w-full">
+          <Typography variant="h4" className="text-center">{currentSong.title}</Typography>
+        </div>
+        <audio
+          id="audio-player"
+          src={currentSong.src}
+          controls
+          className="hidden"
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+        ></audio>
+        <div className="flex items-center justify-center w-full space-x-6 mt-4">
+          <IconButton onClick={closePlayer} color="red">
+            <XMarkIcon className="h-6 w-6" />
+          </IconButton>
+          <IconButton onClick={skipToPrevious} color="blue">
+            <ChevronDoubleLeftIcon className="h-6 w-6" />
+          </IconButton>
+          <IconButton onClick={togglePlayPause} color={isPlaying ? "blue" : "green"}>
+            {isPlaying ? (
+              <PauseIcon className="h-6 w-6" />
+            ) : (
+              <PlayIcon className="h-6 w-6" />
+            )}
+          </IconButton>
+          <IconButton onClick={skipToNext} color="blue">
+            <ChevronDoubleRightIcon className="h-6 w-6" />
+          </IconButton>
+          <IconButton onClick={toggleRepeat} color={isRepeating ? "green" : "blue"}>
+            <ArrowPathRoundedSquareIcon className="h-6 w-6" />
+          </IconButton>
+        </div>
 
-      {isPlayerVisible && (
-        <AdvancedAudioPlayer
-          songName={currentSong.name}
-          audioSrc={currentSong.src}
-          onClose={handleClosePlayer}
-        />
-      )}
+        <div className="w-full mt-4">
+          <div className="flex justify-between items-center w-full">
+            <Typography variant="body2" className="text-sm">{formatTime(currentTime)}</Typography>
+            <Slider
+              value={currentTime}
+              min={0}
+              max={duration || 0}
+              onChange={handleSeek}
+              className="mx-4 w-4/5"
+              style={{
+                backgroundSize: `${(currentTime / duration) * 100}% 100%`, 
+                backgroundPosition: '0 0',
+                backgroundRepeat: 'no-repeat',
+                transition: 'background-size 0.2s ease'
+              }}
+            />
+            <Typography variant="body2" className="text-sm">{formatTime(duration)}</Typography>
+          </div>
+        </div>
+
+        <div className="w-full mt-4 flex justify-end items-center">
+          <Typography variant="body2" className="text-sm mr-2">Volume</Typography>
+          <Slider
+            value={volume}
+            min={0}
+            max={1}
+            step={0.01}
+            onChange={handleVolumeChange}
+            className="w-1/5"
+          />
+        </div>
+
+      </Card>
     </div>
+
   );
 };
 
-export default PlayerApp;
+export default PlayerWrapper;
