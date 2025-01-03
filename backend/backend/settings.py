@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_seed',
 ]
 
+
 AUTH_USER_MODEL = 'core.User'
 
 

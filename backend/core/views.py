@@ -8,20 +8,27 @@ from rest_framework.response import Response
 from rest_framework import status
 # changed Token size in a library
 from rest_framework.authtoken.models import Token
-from .models import User, Playlist, Composition, History
-from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer
+from .models import User, Playlist, Composition, History, Profile
+from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer, ProfileSerializer
 import random
 # Create your views here.
 
 
-def generate_six_digit_token():
-    return "{:06d}".format(random.randint(0, 999999))
+# def generate_six_digit_token():
+#     return "{:06d}".format(random.randint(0, 999999))
 
 
 @api_view(['GET'])
 def get_user(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def get_profile(request):
+    profiles = Profile.objects.all()
+    serializer = ProfileSerializer(profiles, many=True)
     return Response(serializer.data)
 
 
@@ -33,10 +40,12 @@ def create_user(request):
 
         user.set_password(request.data['password'])
         user.save()
+        # six_digit_token = generate_six_digit_token()
 
-        six_digit_token = generate_six_digit_token()
-
-        Token.objects.create(user=user)
+        token = Token.objects.create(user=user)
+        profile = Profile.objects.get(user=user)
+        profile.token = token.key
+        profile.save()
 
         send_mail(
             subject='Token for authorization',
@@ -44,7 +53,7 @@ def create_user(request):
 
 Thank you for signing up at PeachNote! To complete your registration and activate your account, please use the following confirmation token:
 
-Confirmation Token: {six_digit_token}
+Confirmation Token: {token.key}
 
 Alternatively, you can click the link below to confirm your account:
 [Confirmation Link]
@@ -60,7 +69,7 @@ The PeachNote Team
         )
 
         response_data = {
-            "token": six_digit_token
+            "token": token.key
         }
         return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -74,26 +83,34 @@ def login(request):
     if not user.check_password(request.data['password']):
         return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Получение или создание токена через Django Rest Framework
-    token, created = Token.objects.get_or_create(user=user)
+    # Удаляем все старые токены пользователя (если они есть)
+    Token.objects.filter(user=user).delete()
 
-    # Генерация нового 6-значного кода
-    six_digit_code = generate_six_digit_token()
+    # Создаем новый токен для пользователя
+    token = Token.objects.create(user=user)
 
     response_data = {
-        "token": six_digit_code,
-        # Отправляем данные пользователя
-        "user": UserSerializer(instance=user).data
+        "token": token.key,
+        "user": {
+            "username": user.username,
+            "email": user.email
+        }
     }
 
-    return Response(response_data)
+    return Response(response_data, status=status.HTTP_200_OK)
 
 
-@api_view(['GET'])
-@authentication_classes([SessionAuthentication, TokenAuthentication])
-@permission_classes([IsAuthenticated])
+@api_view(['POST'])
 def test_token(request):
-    return Response(f"Passed for {request.user.email}")
+    email = request.data.get('email')
+    input_token = request.data.get('token')
+
+    user = get_object_or_404(User, email=email)
+
+    if user.profile.token == input_token:
+        return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
+
+    return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET', 'PUT', 'DELETE'])
