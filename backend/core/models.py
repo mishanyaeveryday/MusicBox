@@ -61,7 +61,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    token = models.CharField(max_length=6, blank=True, null=True)
+    token = models.CharField(max_length=40, blank=True, null=True)
 
 
 class Playlist(models.Model):

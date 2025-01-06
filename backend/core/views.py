@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth import authenticate
 from django.core.mail import send_mail
 from django.conf import settings
 from rest_framework.permissions import IsAuthenticated
@@ -6,16 +7,12 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.authentication import SessionAuthentication, TokenAuthentication
 from rest_framework.response import Response
 from rest_framework import status
-# changed Token size in a library
 from rest_framework.authtoken.models import Token
 from .models import User, Playlist, Composition, History, Profile
 from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer, ProfileSerializer
 import random
+from rest_framework_simplejwt.tokens import RefreshToken
 # Create your views here.
-
-
-# def generate_six_digit_token():
-#     return "{:06d}".format(random.randint(0, 999999))
 
 
 @api_view(['GET'])
@@ -37,26 +34,20 @@ def create_user(request):
     serializer = UserSerializer(data=request.data)
     if serializer.is_valid():
         user = serializer.save()
-
         user.set_password(request.data['password'])
         user.save()
-        # six_digit_token = generate_six_digit_token()
 
-        token = Token.objects.create(user=user)
-        profile = Profile.objects.get(user=user)
-        profile.token = token.key
-        profile.save()
+        refresh = RefreshToken.for_user(user)
 
+        response_data = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+        }
         send_mail(
-            subject='Token for authorization',
+            subject='PeachNote',
             message=f"""Hello {user.username},
 
-Thank you for signing up at PeachNote! To complete your registration and activate your account, please use the following confirmation token:
-
-Confirmation Token: {token.key}
-
-Alternatively, you can click the link below to confirm your account:
-[Confirmation Link]
+Thank you for signing up at PeachNote!
 
 If you did not register on our platform, please disregard this email.
 
@@ -68,9 +59,6 @@ The PeachNote Team
             fail_silently=False,
         )
 
-        response_data = {
-            "token": token.key
-        }
         return Response(response_data, status=status.HTTP_201_CREATED)
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -83,21 +71,19 @@ def login(request):
     if not user.check_password(request.data['password']):
         return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
 
-    # Удаляем все старые токены пользователя (если они есть)
-    Token.objects.filter(user=user).delete()
-
-    # Создаем новый токен для пользователя
-    token = Token.objects.create(user=user)
-
-    response_data = {
-        "token": token.key,
-        "user": {
-            "username": user.username,
-            "email": user.email
+    if user is not None:
+        refresh = RefreshToken.for_user(user)
+        response_data = {
+            "refresh": str(refresh),
+            "access": str(refresh.access_token),
+            "user": {
+                "username": user.username,
+                "email": user.email
+            }
         }
-    }
+        return Response(response_data, status=status.HTTP_200_OK)
 
-    return Response(response_data, status=status.HTTP_200_OK)
+    return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['POST'])

@@ -3,10 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import {
   Card,
   Input,
-  Checkbox,
   Button,
   Typography,
-  Alert,
 } from "@material-tailwind/react";
 import axios from "axios";
 import '../design/Auth.css';
@@ -74,29 +72,28 @@ const Verify = () => {
       const login = localStorage.getItem('login');
       const code = fullCode.join('');
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/login/test_token/`, { code, login });
+
       const { token, role, accounts } = response.data;
 
       localStorage.setItem('token', token);
       localStorage.setItem('role', role);
 
-      if (role == 'admin') {
+      if (role === 'admin') {
         navigate('/admin');
-        localStorage.setItem('accountId', accounts[0]._id)
-
-      } else if (role == 'user') {
+        localStorage.setItem('accountId', accounts[0]._id);
+      } else if (role === 'user') {
         navigate('/user');
       } else {
         navigate('/');
       }
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Error');
+      setMessage(error.response?.data?.message || 'Error occurred during verification.');
     }
   };
 
   return (
-
-    <div className="enterD centered" style={{ textAlign: "center" }}>
-      <Card color="transparent" shadow={false} >
+    <div className="centered" style={{ textAlign: "center" }}>
+      <Card color="transparent" shadow={false}>
         <div className="flex items-center ml-10 mt-5">
           <Link className='text-indigo-900' size='sm' style={{ fontFamily: 'Arsenal' }} to={'/'}>
             Home&nbsp;&nbsp;{'>'}&nbsp;&nbsp;
@@ -110,7 +107,7 @@ const Verify = () => {
         </Typography>
         <center>
           <Typography variant="div" style={{ fontFamily: 'Philosopher' }} className="text-black font-thin w-1/3">
-            We have sent you an mail to {email} for confirmation. Please enter the verification code below.
+            We have sent you a mail to {email} for confirmation. Please enter the verification code below.
           </Typography>
           <form className="mt-8 mb-2 w-1/3" onSubmit={handleVerifyCode}>
             <div className='container'>
@@ -131,7 +128,9 @@ const Verify = () => {
             <Button color='indigo' className="mt-12 text-2xl rounded-2xl font-thin mb-20" fullWidth type="submit" style={{ fontFamily: 'Philosopher' }} variant="solid">
               Confirm
             </Button>
-          </form>{message && <p>{message}</p>}</center>
+          </form>
+          {message && <p className="text-red-500">{message}</p>}
+        </center>
       </Card>
     </div>
   );
