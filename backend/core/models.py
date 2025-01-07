@@ -42,6 +42,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
     is_premium = models.BooleanField(default=False)
+    otp = models.CharField(max_length=6, null=True, blank=True)
+    otp_expiry = models.DateTimeField(blank=True, null=True)
+    max_otp_try = models.CharField(max_length=2, default=3)
+    otp_max_out = models.DateTimeField(blank=True, null=True)
 
     date_joined = models.DateTimeField(default=timezone.now)
 
@@ -57,11 +61,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_name(self):
         return self.name
-
-
-class Profile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    token = models.CharField(max_length=40, blank=True, null=True)
 
 
 class Playlist(models.Model):

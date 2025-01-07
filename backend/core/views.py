@@ -1,17 +1,23 @@
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth import authenticate
-from django.core.mail import send_mail
-from django.conf import settings
+from django.contrib.auth import login, get_user_model
+from rest_framework.permissions import AllowAny
+from django.shortcuts import get_object_or_404
+from django.http import HttpRequest
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view, permission_classes, authentication_classes
-from rest_framework.authentication import SessionAuthentication, TokenAuthentication
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
-from rest_framework.authtoken.models import Token
-from .models import User, Playlist, Composition, History, Profile
-from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer, ProfileSerializer
-import random
+from .utils import send_otp, send_info_about_created_account
+from .models import User, Playlist, Composition, History
+from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
+from rest_framework.views import APIView
+from rest_framework import status
+from django.core.exceptions import ObjectDoesNotExist
+from rest_framework.exceptions import NotFound
+import random
+import datetime
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
@@ -19,13 +25,6 @@ from rest_framework_simplejwt.tokens import RefreshToken
 def get_user(request):
     users = User.objects.all()
     serializer = UserSerializer(users, many=True)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def get_profile(request):
-    profiles = Profile.objects.all()
-    serializer = ProfileSerializer(profiles, many=True)
     return Response(serializer.data)
 
 
@@ -43,21 +42,8 @@ def create_user(request):
             "refresh": str(refresh),
             "access": str(refresh.access_token),
         }
-        send_mail(
-            subject='PeachNote',
-            message=f"""Hello {user.username},
 
-Thank you for signing up at PeachNote!
-
-If you did not register on our platform, please disregard this email.
-
-Best regards,
-The PeachNote Team
-""",
-            from_email='peachnote76@gmail.com',
-            recipient_list=[user.email],
-            fail_silently=False,
-        )
+        send_info_about_created_account(user.email, user.username)
 
         return Response(response_data, status=status.HTTP_201_CREATED)
 
@@ -66,12 +52,25 @@ The PeachNote Team
 
 @api_view(['POST'])
 def login(request):
-    user = get_object_or_404(User, username=request.data['username'])
+    try:
+        user = get_user_model().objects.get(username=request.data['username'])
 
-    if not user.check_password(request.data['password']):
-        return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
+        if not user.check_password(request.data['password']):
+            return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
 
-    if user is not None:
+        otp = random.randint(100000, 999999)
+        otp_expiry = timezone.now() + datetime.timedelta(minutes=10)
+        user.otp = otp
+        user.otp_expiry = otp_expiry
+        user.save()
+
+        # Отправляем OTP на email
+        if send_otp(user.email, otp):
+            print(f"OTP {otp} sent to {user.email}")
+        else:
+            return Response({"detail": "Failed to send OTP."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+        # Создаем JWT токены
         refresh = RefreshToken.for_user(user)
         response_data = {
             "refresh": str(refresh),
@@ -81,22 +80,65 @@ def login(request):
                 "email": user.email
             }
         }
+
         return Response(response_data, status=status.HTTP_200_OK)
 
-    return Response({"detail": "Invalid credentials."}, status=status.HTTP_400_BAD_REQUEST)
+    except User.DoesNotExist:
+        raise NotFound({"detail": "User not found"})
 
 
-@api_view(['POST'])
-def test_token(request):
-    email = request.data.get('email')
-    input_token = request.data.get('token')
+class VerifyOTPView(APIView):
+    permission_classes = [AllowAny]
 
-    user = get_object_or_404(User, email=email)
+    @csrf_exempt
+    def post(self, request, *args, **kwargs):
+        otp = request.data.get('otp')
+        email = request.data.get('email')
 
-    if user.profile.token == input_token:
-        return Response({"detail": "Token is valid."}, status=status.HTTP_200_OK)
+        if not otp or not email:
+            return Response(
+                {"detail": "OTP and email are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-    return Response({"detail": "Invalid token."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Получаем пользователя по email
+            user = User.objects.get(email=email)
+
+            # Проверяем, совпадает ли OTP и не истек ли срок действия
+            if user.otp != otp:
+                return Response(
+                    {"detail": "Invalid OTP."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            if user.otp_expiry < timezone.now():
+                return Response(
+                    {"detail": "OTP has expired."},
+                    status=status.HTTP_400_BAD_REQUEST,
+                )
+
+            # Сбрасываем поля OTP
+            user.otp = None
+            user.otp_expiry = None
+            user.max_otp_try = 3
+            user.otp_max_out = None
+            user.save()
+
+            # Генерация токенов доступа
+            refresh = RefreshToken.for_user(user)
+
+            # Отправляем токены в ответе
+            return Response(
+                {"access": str(refresh.access_token), "refresh": str(refresh)},
+                status=status.HTTP_200_OK,
+            )
+
+        except ObjectDoesNotExist:
+            return Response(
+                {"detail": "User not found."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
 
 @api_view(['GET', 'PUT', 'DELETE'])

@@ -2,7 +2,6 @@ import React, { useState, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Card,
-  Input,
   Button,
   Typography,
 } from "@material-tailwind/react";
@@ -68,15 +67,19 @@ const Verify = () => {
   const handleVerifyCode = async (e) => {
     e.preventDefault();
 
+    const otp = fullCode.join('');
+
     try {
-      const login = localStorage.getItem('login');
-      const code = fullCode.join('');
-      const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/login/test_token/`, { code, login });
+      const response = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}core/users/verify_otp/`,
+        { otp, email }
+      );
 
-      const { token, role, accounts } = response.data;
+      const { otp: newOtp, role, accounts } = response.data;
 
-      localStorage.setItem('token', token);
+      localStorage.setItem('otp', newOtp);
       localStorage.setItem('role', role);
+
 
       if (role === 'admin') {
         navigate('/admin');

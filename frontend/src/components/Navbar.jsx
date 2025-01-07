@@ -31,7 +31,7 @@ export function NavbarDark() {
         return;
       }
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}auth/check-token`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/test_token`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

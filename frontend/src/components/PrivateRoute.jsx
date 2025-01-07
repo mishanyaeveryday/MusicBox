@@ -15,7 +15,7 @@ const PrivateRoute = ({ children, allowedRoles }) => {
       }
 
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/users/check-token`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/test_token`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

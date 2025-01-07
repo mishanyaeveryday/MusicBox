@@ -7,10 +7,9 @@ from .views import *
 
 urlpatterns = [
     path('users/', get_user, name='get_user'),
-    path('profiles/', get_profile, name='get_profile'),
     path('users/create/', create_user, name='create_user'),
     path('users/login/', login, name='login'),
-    path('users/login/test_token/', test_token, name='test_token'),
+    path('users/verify_otp/', VerifyOTPView.as_view(), name='VerifyOTPView'),
     path('users/<uuid:pk>/', user_detail, name='user_detail'),
     path('playlists/', get_playlists, name='get_playlists'),
     path('playlists/create/', create_playlist, name='create_playlist'),
