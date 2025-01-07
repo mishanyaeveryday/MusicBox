@@ -64,13 +64,10 @@ def login(request):
         user.otp_expiry = otp_expiry
         user.save()
 
-        # Отправляем OTP на email
         if send_otp(user.email, otp):
             print(f"OTP {otp} sent to {user.email}")
         else:
             return Response({"detail": "Failed to send OTP."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        # Создаем JWT токены
         refresh = RefreshToken.for_user(user)
         response_data = {
             "refresh": str(refresh),
@@ -102,10 +99,8 @@ class VerifyOTPView(APIView):
             )
 
         try:
-            # Получаем пользователя по email
             user = User.objects.get(email=email)
 
-            # Проверяем, совпадает ли OTP и не истек ли срок действия
             if user.otp != otp:
                 return Response(
                     {"detail": "Invalid OTP."},
@@ -117,18 +112,12 @@ class VerifyOTPView(APIView):
                     {"detail": "OTP has expired."},
                     status=status.HTTP_400_BAD_REQUEST,
                 )
-
-            # Сбрасываем поля OTP
             user.otp = None
             user.otp_expiry = None
             user.max_otp_try = 3
             user.otp_max_out = None
             user.save()
-
-            # Генерация токенов доступа
             refresh = RefreshToken.for_user(user)
-
-            # Отправляем токены в ответе
             return Response(
                 {"access": str(refresh.access_token), "refresh": str(refresh)},
                 status=status.HTTP_200_OK,
