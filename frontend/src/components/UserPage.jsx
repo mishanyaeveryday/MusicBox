@@ -14,7 +14,7 @@ const UserPage = () => {
             try {
                 const user = JSON.parse(localStorage.getItem("user"));
                 if (user && user.id) {
-                    const { data } = await axios.get(`/api/user/${user.id}/recent`);
+                    const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${user.id}/recent`);
                     setRecentSongs(data.songs || []);
                     setRecentArtists(data.artists || []);
                     setUserData({ name: data.name || "", email: data.email || "", password: "" });
@@ -86,7 +86,7 @@ const UserPage = () => {
                             accept="image/*"
                             onChange={handleFileUpload}
                             className="!absolute p-1"
-                            style={{ zIndex:"100",opacity:"0",width:"30px" }}
+                            style={{ zIndex: "100", opacity: "0", width: "30px" }}
                         />
                         <IconButton size="sm">
                             <PencilIcon className="h-5 w-5" />
@@ -96,73 +96,73 @@ const UserPage = () => {
             </div>
 
             <Card className="w-full max-w-lg mt-6">
-    <CardHeader floated={false} shadow={false} className="bg-gray-100 p-4 text-center">
-        <Typography variant="h4">User Profile</Typography>
-    </CardHeader>
-    <CardBody className="flex flex-col items-center gap-4 p-6">
-    <div className="w-full flex items-center gap-2">
-        <div className="flex-1">
-            <Input
-                value={userData.name}
-                onChange={(e) => handleEdit("name", e.target.value)}
-                placeholder="Name"
-                className="mb-2 placeholder:opacity-100"
-            />
-        </div>
-        <Tooltip content="Save Name" placement="bottom">
-            <IconButton
-                size="sm"
-                onClick={() => saveChanges("name")}
-                className="ml-2 p-2"
-            >
-                <PencilIcon className="h-5 w-5" />
-            </IconButton>
-        </Tooltip>
-    </div>
+                <CardHeader floated={false} shadow={false} className="bg-gray-100 p-4 text-center">
+                    <Typography variant="h4">User Profile</Typography>
+                </CardHeader>
+                <CardBody className="flex flex-col items-center gap-4 p-6">
+                    <div className="w-full flex items-center gap-2">
+                        <div className="flex-1">
+                            <Input
+                                value={userData.name}
+                                onChange={(e) => handleEdit("name", e.target.value)}
+                                placeholder="Name"
+                                className="mb-2 placeholder:opacity-100"
+                            />
+                        </div>
+                        <Tooltip content="Save Name" placement="bottom">
+                            <IconButton
+                                size="sm"
+                                onClick={() => saveChanges("name")}
+                                className="ml-2 p-2"
+                            >
+                                <PencilIcon className="h-5 w-5" />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
 
-    <div className="w-full flex items-center gap-2">
-        <div className="flex-1">
-            <Input
-                value={userData.email}
-                onChange={(e) => handleEdit("email", e.target.value)}
-                placeholder="Email"
-                className="mb-2 placeholder:opacity-100"
-            />
-        </div>
-        <Tooltip content="Save Email" placement="bottom">
-            <IconButton
-                size="sm"
-                onClick={() => saveChanges("email")}
-                className="ml-2 p-2"
-            >
-                <PencilIcon className="h-5 w-5" />
-            </IconButton>
-        </Tooltip>
-    </div>
+                    <div className="w-full flex items-center gap-2">
+                        <div className="flex-1">
+                            <Input
+                                value={userData.email}
+                                onChange={(e) => handleEdit("email", e.target.value)}
+                                placeholder="Email"
+                                className="mb-2 placeholder:opacity-100"
+                            />
+                        </div>
+                        <Tooltip content="Save Email" placement="bottom">
+                            <IconButton
+                                size="sm"
+                                onClick={() => saveChanges("email")}
+                                className="ml-2 p-2"
+                            >
+                                <PencilIcon className="h-5 w-5" />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
 
-    <div className="w-full flex items-center gap-2">
-        <div className="flex-1">
-            <Input
-                type="password"
-                value={userData.password}
-                onChange={(e) => handleEdit("password", e.target.value)}
-                placeholder="Password"
-                className="mb-2 placeholder:opacity-100"
-            />
-        </div>
-        <Tooltip content="Save Password" placement="bottom">
-            <IconButton
-                size="sm"
-                onClick={() => saveChanges("password")}
-                className="ml-2 p-2"
-            >
-                <PencilIcon className="h-5 w-5" />
-            </IconButton>
-        </Tooltip>
-    </div>
-</CardBody>
+                    <div className="w-full flex items-center gap-2">
+                        <div className="flex-1">
+                            <Input
+                                type="password"
+                                value={userData.password}
+                                onChange={(e) => handleEdit("password", e.target.value)}
+                                placeholder="Password"
+                                className="mb-2 placeholder:opacity-100"
+                            />
+                        </div>
+                        <Tooltip content="Save Password" placement="bottom">
+                            <IconButton
+                                size="sm"
+                                onClick={() => saveChanges("password")}
+                                className="ml-2 p-2"
+                            >
+                                <PencilIcon className="h-5 w-5" />
+                            </IconButton>
+                        </Tooltip>
+                    </div>
+                </CardBody>
 
-</Card>
+            </Card>
 
             <Card className="w-full max-w-lg mt-6">
                 <CardHeader floated={false} shadow={false} className="bg-gray-100 p-4 text-center">
