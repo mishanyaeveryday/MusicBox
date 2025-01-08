@@ -30,41 +30,49 @@ export function NavbarDark() {
         setIsLoggedIn(false);
         return;
       }
+
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.data.valid) {
-          setIsLoggedIn(true);
-          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${accountId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          let formattedUsername = "";
-          if (localStorage.getItem('role') == "admin") {
-            formattedUsername = "Admin";
-          }
-          else {
-            console.log(userResponse.data.person);
-            const { firstname, middlename } = userResponse.data.person;
-            formattedUsername = `${firstname} ${middlename}`;
-          }
-          setUserName(formattedUsername);
-        } else {
-          localStorage.removeItem("accountId");
-          localStorage.removeItem("token");
-          setIsLoggedIn(false);
+        const isTokenValid = await validateToken(token);
+        if (!isTokenValid) {
+          handleLogout();
+          return;
         }
+
+        const userResponse = await fetchUserData(accountId, token);
+        const formattedUsername = formatUsername(userResponse.data.person);
+        setUserName(formattedUsername);
+        setIsLoggedIn(true);
       } catch (error) {
-        setIsLoggedIn(false);
+        console.error("Error during token validation or user fetching:", error);
+        handleLogout();
       }
     };
 
     checkToken();
   }, [token]);
+
+  const validateToken = async (token) => {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data.valid;
+  };
+
+  const fetchUserData = async (accountId, token) => {
+    return axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${accountId}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+  };
+
+  const formatUsername = ({ firstname, middlename }) => {
+    return localStorage.getItem('role') === "admin" ? "Admin" : `${firstname} ${middlename}`;
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem("accountId");
+    localStorage.removeItem("token");
+    setIsLoggedIn(false);
+  };
 
 
   const handleLanguageChange = (lang) => {

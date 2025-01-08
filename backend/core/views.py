@@ -9,7 +9,7 @@ from rest_framework import status
 from .utils import send_otp, send_info_about_created_account
 from .models import User, Playlist, Composition, History
 from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.utils import timezone
 from rest_framework.views import APIView
 from rest_framework import status
@@ -65,7 +65,7 @@ def login(request):
         user.save()
 
         if send_otp(user.email, otp):
-            print(f"OTP {otp} sent to {user.email}")
+            print(f"OTP sent to {user.email}")
         else:
             return Response({"detail": "Failed to send OTP."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         refresh = RefreshToken.for_user(user)
@@ -130,7 +130,23 @@ class VerifyOTPView(APIView):
             )
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@api_view(['GET'])
+def validate_token(request):
+    auth_header = request.headers.get('Authorization')
+    if not auth_header or not auth_header.startswith('Bearer '):
+        return Response({"valid": False, "error": "Authorization header missing or invalid"}, status=status.HTTP_401_UNAUTHORIZED)
+
+    token = auth_header.split(' ')[1]
+    try:
+        access_token = AccessToken(token)
+        user_id = access_token['user_id']
+        user = get_user_model().objects.get(id=user_id)
+        return Response({"valid": True})
+    except Exception as e:
+        return Response({"valid": False, "error": str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+
+
+@ api_view(['GET', 'PUT', 'DELETE'])
 def user_detail(request, pk):
     try:
         user = User.objects.get(pk=pk)
@@ -152,14 +168,14 @@ def user_detail(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_playlists(request):
     playlists = Playlist.objects.all()
     serializer = PlaylistSerializer(playlists, many=True)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def create_playlist(request):
     serializer = PlaylistSerializer(data=request.data)
     if serializer.is_valid():
@@ -168,7 +184,7 @@ def create_playlist(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def playlist_detail(request, pk):
     try:
         playlist = Playlist.objects.get(pk=pk)
@@ -190,14 +206,14 @@ def playlist_detail(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_compositions(request):
     compositions = Composition.objects.all()
     serializer = CompositionSerializer(compositions, many=True)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def create_composition(request):
     serializer = CompositionSerializer(data=request.data)
     if serializer.is_valid():
@@ -206,7 +222,7 @@ def create_composition(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def composition_detail(request, pk):
     try:
         composition = Composition.objects.get(pk=pk)
@@ -228,7 +244,7 @@ def composition_detail(request, pk):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET'])
+@ api_view(['GET'])
 def get_compositions_by_category(request, category):
     try:
         compositions = Composition.objects.filter(category=category)
@@ -242,15 +258,15 @@ def get_compositions_by_category(request, category):
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
+@ api_view(['GET'])
+@ permission_classes([IsAuthenticated])
 def get_history(request):
     histories = History.objects.all()
     serializer = HistorySerializer(histories, many=True)
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@ api_view(['POST'])
 def create_history(request):
     serializer = HistorySerializer(data=request.data)
     if serializer.is_valid():
@@ -259,7 +275,7 @@ def create_history(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE'])
 def history_detail(request, pk):
     try:
         history = History.objects.get(pk=pk)

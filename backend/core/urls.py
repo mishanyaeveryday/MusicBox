@@ -22,6 +22,6 @@ urlpatterns = [
     path('history/', get_history, name='get_history'),
     path('history/create/', create_history, name='create_history'),
     path('history/<uuid:pk>/', history_detail, name='history_detail'),
-    path('token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+    path('token/', validate_token, name='validate_token()'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 ]
