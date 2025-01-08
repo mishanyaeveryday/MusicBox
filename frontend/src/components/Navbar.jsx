@@ -31,14 +31,14 @@ export function NavbarDark() {
         return;
       }
       try {
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/test_token`, {
+        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         if (response.data.valid) {
           setIsLoggedIn(true);
-          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/user/me/${accountId}`, {
+          const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${accountId}`, {
             headers: {
               Authorization: `Bearer ${token}`,
             },

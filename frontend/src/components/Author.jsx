@@ -10,7 +10,7 @@ const Author = () => {
     const [playlistIcon, setPlaylistIcon] = useState("");
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/authors?author=${author}`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users?author=${author}`)
             .then((response) => {
                 setPlaylistIcon(response.data.icon || "");
                 setCompositions(response.data.compositions || []);

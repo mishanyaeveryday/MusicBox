@@ -15,7 +15,7 @@ import '../design/Home.css';
 import axios from "axios";
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
-const Library = (isLoggedIn,isEmptyPlaylists, isEmptyCompositors) => {
+const Library = (isLoggedIn, isEmptyPlaylists, isEmptyCompositors) => {
     const navigate = useNavigate();
     return (
         <div className="h-full">
@@ -27,13 +27,14 @@ const Library = (isLoggedIn,isEmptyPlaylists, isEmptyCompositors) => {
                         </IconButton>
                         <Typography variant="h3">My media library</Typography>
                         <IconButton onClick={() => {
-                                if (isLoggedIn) {
-                                    navigate("/createPlaylist");
-                                } else {
-                                    navigate("/login");
-                                }}} variant="text" color="white" className="rounded">
+                            if (isLoggedIn) {
+                                navigate("/createPlaylist");
+                            } else {
+                                navigate("/login");
+                            }
+                        }} variant="text" color="white" className="rounded">
                             <PlusIcon
-                              className="h-6 w-6" />
+                                className="h-6 w-6" />
                         </IconButton>
                     </div>
                 </CardHeader>
@@ -144,47 +145,47 @@ const Home = () => {
     const token = localStorage.getItem('token');
     const accountId = localStorage.getItem('accountId');
     const navigate = useNavigate();
-  
+
     useEffect(() => {
-      const checkToken = async () => {
-        if (!token) {
-          setIsLoggedIn(false);
-          return;
-        }
-        try {
-          const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/check-token`, {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          if (response.data.valid) {
-            setIsLoggedIn(true);
-            const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/me/${accountId}`, {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            });
-            let formattedUsername = "";
-            if (localStorage.getItem('role') == "admin") {
-              formattedUsername = "Admin";
+        const checkToken = async () => {
+            if (!token) {
+                setIsLoggedIn(false);
+                return;
             }
-            else {
-              console.log(userResponse.data.person);
-              const { firstname, middlename } = userResponse.data.person;
-              formattedUsername = `${firstname} ${middlename}`;
+            try {
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token`, {
+                    headers: {
+                        Authorization: `Bearer ${token}`,
+                    },
+                });
+                if (response.data.valid) {
+                    setIsLoggedIn(true);
+                    const userResponse = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${accountId}`, {
+                        headers: {
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+                    let formattedUsername = "";
+                    if (localStorage.getItem('role') == "admin") {
+                        formattedUsername = "Admin";
+                    }
+                    else {
+                        console.log(userResponse.data.person);
+                        const { firstname, middlename } = userResponse.data.person;
+                        formattedUsername = `${firstname} ${middlename}`;
+                    }
+                    setUserName(formattedUsername);
+                } else {
+                    localStorage.removeItem("accountId");
+                    localStorage.removeItem("token");
+                    setIsLoggedIn(false);
+                }
+            } catch (error) {
+                setIsLoggedIn(false);
             }
-            setUserName(formattedUsername);
-          } else {
-            localStorage.removeItem("accountId");
-            localStorage.removeItem("token");
-            setIsLoggedIn(false);
-          }
-        } catch (error) {
-          setIsLoggedIn(false);
-        }
-      };
-  
-      checkToken();
+        };
+
+        checkToken();
     }, [token]);
     const [isEmptyPlaylists, setIsEmptyPlaylists] = useState(false);
     const [isEmptyCompositors, setIsEmptyCompositors] = useState(false);

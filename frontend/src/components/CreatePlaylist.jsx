@@ -12,7 +12,7 @@ const CreatePlaylist = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        axios.get(`core/users/${userId}/playlists`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/playlists`)
             .then((response) => {
                 const playlist = response.data;
                 setPlaylistName(playlist.name);
