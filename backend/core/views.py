@@ -229,6 +229,20 @@ def composition_detail(request, pk):
 
 
 @api_view(['GET'])
+def get_compositions_by_category(request, category):
+    try:
+        compositions = Composition.objects.filter(category=category)
+        if not compositions.exists():
+            return Response({"detail": "No compositions found in this category."}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CompositionSerializer(compositions, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except Exception as e:
+        return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_history(request):
     histories = History.objects.all()

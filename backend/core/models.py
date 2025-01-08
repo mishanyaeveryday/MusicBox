@@ -4,6 +4,7 @@ from django.contrib.auth.models import UserManager, AbstractBaseUser, Permission
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 import uuid
+from django.core.exceptions import ValidationError
 
 
 class CustomUserManager(UserManager):
@@ -75,11 +76,20 @@ class Playlist(models.Model):
         return self.name
 
 
+def validate_single_word(value):
+    if ' ' in value.strip():
+        raise ValidationError('Category must be a single word.')
+
+
 class Composition(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=255, default='')
-    category = models.CharField(max_length=255, default='')
+    category = models.CharField(
+        max_length=12,
+        default='',
+        validators=[validate_single_word]
+    )
     time = models.DurationField()
     text = models.TextField()
     image = models.ImageField(
