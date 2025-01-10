@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody, Button, Typography, IconButton, Tooltip, Input } from "@material-tailwind/react";
+import { Card, CardHeader, CardBody, Typography, IconButton, Tooltip, Input } from "@material-tailwind/react";
 import { PencilIcon, UserIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
+
+const api = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+});
 
 const UserPage = () => {
     const [userData, setUserData] = useState({ name: "", email: "", password: "" });
@@ -12,14 +16,14 @@ const UserPage = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const user = JSON.parse(localStorage.getItem("user"));
-                if (user && user.id) {
-                    const { data } = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${user.id}/recent`);
+                const userId = localStorage.getItem("userId"); 
+                if (userId) {
+                    const { data } = await api.get(`core/users/${userId}/recent`);
                     setRecentSongs(data.songs || []);
                     setRecentArtists(data.artists || []);
                     setUserData({ name: data.name || "", email: data.email || "", password: "" });
 
-                    const { data: userIcon } = await axios.get(`/api/user/${user.id}/icon`);
+                    const { data: userIcon } = await api.get(`core/users/${userId}/icon`);
                     setIcon(userIcon.iconUrl || "");
                 }
             } catch (error) {
@@ -32,13 +36,14 @@ const UserPage = () => {
 
     const handleEdit = (field, value) => {
         setUserData((prev) => ({ ...prev, [field]: value }));
+        updateUserData(field, value);
     };
 
-    const saveChanges = async (field) => {
+    const updateUserData = async (field, value) => {
         try {
-            const user = JSON.parse(localStorage.getItem("user"));
-            if (user && user.id) {
-                await axios.put(`/api/user/${user.id}`, { [field]: userData[field] });
+            const userId = localStorage.getItem("userId");
+            if (userId) {
+                await api.put(`core/users/${userId}`, { [field]: value });
                 alert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
             }
         } catch (error) {
@@ -53,15 +58,17 @@ const UserPage = () => {
                 const formData = new FormData();
                 formData.append("icon", file);
 
-                const user = JSON.parse(localStorage.getItem("user"));
-                await axios.post(`/api/user/${user.id}/upload-icon`, formData, {
-                    headers: { "Content-Type": "multipart/form-data" },
-                });
+                const userId = localStorage.getItem("userId"); 
+                if (userId) {
+                    await api.post(`core/users/${userId}/upload-icon`, formData, {
+                        headers: { "Content-Type": "multipart/form-data" },
+                    });
 
-                const { data: userIcon } = await axios.get(`/api/user/${user.id}/icon`);
-                setIcon(userIcon.iconUrl || "");
+                    const { data: userIcon } = await api.get(`core/users/${userId}/icon`);
+                    setIcon(userIcon.iconUrl || "");
 
-                alert("Icon updated successfully!");
+                    alert("Icon updated successfully!");
+                }
             } catch (error) {
                 console.error("Error uploading file:", error);
                 alert("Failed to upload icon.");
@@ -109,15 +116,6 @@ const UserPage = () => {
                                 className="mb-2 placeholder:opacity-100"
                             />
                         </div>
-                        <Tooltip content="Save Name" placement="bottom">
-                            <IconButton
-                                size="sm"
-                                onClick={() => saveChanges("name")}
-                                className="ml-2 p-2"
-                            >
-                                <PencilIcon className="h-5 w-5" />
-                            </IconButton>
-                        </Tooltip>
                     </div>
 
                     <div className="w-full flex items-center gap-2">
@@ -129,15 +127,6 @@ const UserPage = () => {
                                 className="mb-2 placeholder:opacity-100"
                             />
                         </div>
-                        <Tooltip content="Save Email" placement="bottom">
-                            <IconButton
-                                size="sm"
-                                onClick={() => saveChanges("email")}
-                                className="ml-2 p-2"
-                            >
-                                <PencilIcon className="h-5 w-5" />
-                            </IconButton>
-                        </Tooltip>
                     </div>
 
                     <div className="w-full flex items-center gap-2">
@@ -150,18 +139,8 @@ const UserPage = () => {
                                 className="mb-2 placeholder:opacity-100"
                             />
                         </div>
-                        <Tooltip content="Save Password" placement="bottom">
-                            <IconButton
-                                size="sm"
-                                onClick={() => saveChanges("password")}
-                                className="ml-2 p-2"
-                            >
-                                <PencilIcon className="h-5 w-5" />
-                            </IconButton>
-                        </Tooltip>
                     </div>
                 </CardBody>
-
             </Card>
 
             <Card className="w-full max-w-lg mt-6">

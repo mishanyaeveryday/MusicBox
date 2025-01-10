@@ -23,17 +23,17 @@ function App() {
       <div style={{ flexGrow: "2", alignContent: "center" }}>
       <Routes>
         <Route path='/' element={<Home/>}/>
-        <Route path='/playlist/:category' element={<Playlist/>}/>
+        <Route path='/playlist/:name' element={<Playlist/>}/>
         <Route path='/author/:author' element={<Author/>}/>
         <Route path='/login' element={<Login/>}/>
         <Route path='/register' element={<Register/>}/>
         <Route path='/verify' element={<Verify/>}/>
-                <Route path='/userPage' element={<UserPage />} />
-                <Route path="/createPlaylist" element={<CreatePlaylist />} />
-                <Route path="/notifications" element={<Notifications />} />
         <Route path="/user/*" element={<PrivateRoute allowedRoles={['user', 'admin']}>
               <Routes>
                 <Route path="*" element={<Error />}></Route>
+                <Route index element={<UserPage />} />
+                <Route path="/createPlaylist" element={<CreatePlaylist />} />
+                <Route path="/notifications" element={<Notifications />} />
               </Routes>
             </PrivateRoute>} />
         <Route path='*' element={<Error/>}/>

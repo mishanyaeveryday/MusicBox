@@ -5,12 +5,12 @@ import axios from "axios";
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
 const Playlist = () => {
-    const { category } = useParams();
+    const { name } = useParams();
     const [compositions, setCompositions] = useState([]);
     const [playlistIcon, setPlaylistIcon] = useState("");
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/compositions?category=${category}`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists?name=${name}`)
             .then((response) => {
                 setCompositions(response.data.compositions || []);
                 setPlaylistIcon(response.data.icon || "");
@@ -18,7 +18,7 @@ const Playlist = () => {
             .catch((error) => {
                 console.error("Error fetching compositions:", error);
             });
-    }, [category]);
+    }, [name]);
 
     return (
         <div>
@@ -40,7 +40,7 @@ const Playlist = () => {
                         </div>
                         <div className="flex-1">
                             <Typography variant="h3" className="font-semibold text-gray-800">
-                                {category}
+                            {name.length > 10 ? `${name.substring(0, 10)}...` : name}
                             </Typography>
                         </div>
                         <IconButton

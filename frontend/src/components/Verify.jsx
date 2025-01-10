@@ -72,23 +72,13 @@ const Verify = () => {
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}core/users/verify_otp/`,
-        { otp, email }
+        {otp, email }
       );
+      const { token } = response.data;
 
-      const { otp: newOtp, role, accounts } = response.data;
+      localStorage.setItem('token', token);
+      navigate('/user');
 
-      localStorage.setItem('otp', newOtp);
-      localStorage.setItem('role', role);
-
-
-      if (role === 'admin') {
-        navigate('/admin');
-        localStorage.setItem('accountId', accounts[0]._id);
-      } else if (role === 'user') {
-        navigate('/user');
-      } else {
-        navigate('/');
-      }
     } catch (error) {
       setMessage(error.response?.data?.message || 'Error occurred during verification.');
     }

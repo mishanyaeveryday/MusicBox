@@ -20,6 +20,7 @@ export function NavbarDark() {
   const [language, setLanguage] = useState("ENG");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState("");
+  const [userPhoto, setUserPhoto] = useState("");
   const token = localStorage.getItem('token');
   const accountId = localStorage.getItem('accountId');
   const navigate = useNavigate();
@@ -39,8 +40,7 @@ export function NavbarDark() {
         }
 
         const userResponse = await fetchUserData(accountId, token);
-        const formattedUsername = formatUsername(userResponse.data.person);
-        setUserName(formattedUsername);
+        setUserPhoto(userResponse.data.person.photo);
         setIsLoggedIn(true);
       } catch (error) {
         console.error("Error during token validation or user fetching:", error);
@@ -64,20 +64,17 @@ export function NavbarDark() {
     });
   };
 
-  const formatUsername = ({ firstname, middlename }) => {
-    return localStorage.getItem('role') === "admin" ? "Admin" : `${firstname} ${middlename}`;
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("accountId");
     localStorage.removeItem("token");
     setIsLoggedIn(false);
+    setUserPhoto("");
   };
-
 
   const handleLanguageChange = (lang) => {
     setLanguage(lang);
   };
+
   return (
     <Navbar
       variant="solid"
@@ -127,9 +124,18 @@ export function NavbarDark() {
 
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
           <div className="flex gap-1 md:mx-1">
-            <IconButton onClick={() => navigate("/register")} variant="text" color="white">
-              <UserIcon className="h-8 w-8" />
-            </IconButton>
+            {isLoggedIn ? (
+              <img
+                src={userPhoto}
+                alt="User"
+                className="h-8 w-8 rounded-full cursor-pointer"
+                onClick={() => navigate("/profile")}
+              />
+            ) : (
+              <IconButton onClick={() => navigate("/register")} variant="text" color="white">
+                <UserIcon className="h-8 w-8" />
+              </IconButton>
+            )}
           </div>
           <Menu>
             <MenuHandler>
@@ -147,7 +153,7 @@ export function NavbarDark() {
         </div>
       </div>
     </Navbar>
-
   );
 }
+
 export default NavbarDark;

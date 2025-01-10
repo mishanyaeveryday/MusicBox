@@ -19,8 +19,6 @@ const LoginForm = () => {
         password
       });
 
-      localStorage.setItem('token', response.data.token);
-
       localStorage.setItem('email', response.data.user.email);
 
       navigate('/verify');
