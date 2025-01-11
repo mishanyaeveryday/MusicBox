@@ -207,7 +207,7 @@ def playlist_detail(request, pk):
 
 
 @api_view(['GET'])
-def get_compositions_by_playlist(request, pk):
+def get_compositions_from_playlist(request, pk):
     try:
         compositions = Composition.objects.filter(pk=pk)
 

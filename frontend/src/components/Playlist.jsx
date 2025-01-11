@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Card, IconButton, CardBody, CardFooter, Typography, Button } from "@material-tailwind/react";
+import { Card, IconButton, CardBody, CardFooter, Typography } from "@material-tailwind/react";
 import axios from "axios";
-import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/outline";
 
 const Playlist = () => {
-    const { name } = useParams();
+    const { playlistId } = useParams();
     const [compositions, setCompositions] = useState([]);
     const [playlistIcon, setPlaylistIcon] = useState("");
+    const [playlistName, setPlaylistName] = useState("");
+    const [playlistDescription, setPlaylistDescription] = useState("");
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists?name=${name}`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}`)
             .then((response) => {
                 setCompositions(response.data.compositions || []);
-                setPlaylistIcon(response.data.icon || "");
+                setPlaylistIcon(response.data.image || "");
+                setPlaylistName(response.data.name || "Untitled Playlist");
+                setPlaylistDescription(response.data.description || "No description available.");
             })
             .catch((error) => {
-                console.error("Error fetching compositions:", error);
+                console.error("Error fetching playlist data:", error);
             });
-    }, [name]);
+    }, [playlistId]);
 
     return (
         <div>
@@ -40,7 +44,10 @@ const Playlist = () => {
                         </div>
                         <div className="flex-1">
                             <Typography variant="h3" className="font-semibold text-gray-800">
-                            {name.length > 10 ? `${name.substring(0, 10)}...` : name}
+                                {playlistName.length > 10 ? `${playlistName.substring(0, 10)}...` : playlistName}
+                            </Typography>
+                            <Typography variant="body2" className="text-gray-500 text-sm leading-relaxed">
+                                <p className="break-words mt-2 max-w-2xl">{playlistDescription}</p>
                             </Typography>
                         </div>
                         <IconButton
@@ -54,9 +61,20 @@ const Playlist = () => {
                         <Card className="h-full w-full bg-0">
                             <CardBody className="text-center">
                                 <div className="grid grid-cols-5 gap-4">
-                                    {compositions.map((composition) => (
-                                        <Composition key={composition.id} data={composition} />
-                                    ))}
+                                    {compositions.length === 0 ? (
+                                        <Typography variant="h6" className="col-span-5 text-center text-gray-500">
+                                            No compositions available in this playlist.
+                                        </Typography>
+                                    ) : (
+                                        compositions.map((composition) => (
+                                            <div key={composition.id} className="composition-item">
+                                                <Typography variant="h6">{composition.title}</Typography>
+                                                <p style={{ whiteSpace: 'pre-wrap', color: 'black' }}>
+                                                    {composition.description}
+                                                </p>
+                                            </div>
+                                        ))
+                                    )}
                                 </div>
                             </CardBody>
                             <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>

@@ -77,7 +77,7 @@ export function NavbarDark() {
 
   return (
     <Navbar
-      variant="solid"
+      variant="filled"
       color="red"
       className="bg-[#FF7F50] px-4 py-3"
       style={{ minWidth: "100%", borderRadius: "0" }}
