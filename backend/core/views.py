@@ -119,7 +119,15 @@ class VerifyOTPView(APIView):
             user.save()
             refresh = RefreshToken.for_user(user)
             return Response(
-                {"access": str(refresh.access_token), "refresh": str(refresh)},
+                {
+                    "access": str(refresh.access_token),
+                    "refresh": str(refresh),
+                    "user": {
+                        "id": user.id,
+                        "email": user.email,
+                        "username": user.username
+                    }
+                },
                 status=status.HTTP_200_OK,
             )
 
@@ -161,7 +169,7 @@ def user_detail(request, pk):
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
-        return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         user.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

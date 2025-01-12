@@ -28,6 +28,7 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/verify' element={<Verify />} />
+          <Route path="/user" element={<UserPage />} />
           <Route path="/user/*" element={<PrivateRoute allowedRoles={['user', 'admin']}>
             <Routes>
               <Route path="*" element={<Error />}></Route>

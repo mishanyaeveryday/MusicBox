@@ -18,12 +18,9 @@ const LoginForm = () => {
         username: login,
         password
       });
-
       localStorage.setItem('email', response.data.user.email);
-
       navigate('/verify');
     } catch (error) {
-      console.log(error);
       setMessage(error.response?.data?.detail || 'Ошибка входа');
     }
   };

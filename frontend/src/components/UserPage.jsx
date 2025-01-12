@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Card, CardHeader, CardBody, Typography, IconButton, Tooltip, Input } from "@material-tailwind/react";
 import { PencilIcon, UserIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
@@ -12,27 +13,34 @@ const UserPage = () => {
     const [recentSongs, setRecentSongs] = useState([]);
     const [recentArtists, setRecentArtists] = useState([]);
     const [icon, setIcon] = useState("");
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const userId = localStorage.getItem("userId"); 
-                if (userId) {
-                    const { data } = await api.get(`core/users/${userId}/recent`);
-                    setRecentSongs(data.songs || []);
-                    setRecentArtists(data.artists || []);
-                    setUserData({ name: data.name || "", email: data.email || "", password: "" });
-
-                    const { data: userIcon } = await api.get(`core/users/${userId}/icon`);
-                    setIcon(userIcon.iconUrl || "");
+                const userId = localStorage.getItem('userId');
+                if (!userId) {
+                    navigate("/login");
+                    return;
                 }
+
+                const { data } = await api.get(`core/users/${userId}/`);
+                setRecentSongs(data.songs || []);
+                setRecentArtists(data.artists || []);
+                setUserData({ name: data.name || "", email: data.email || "", password: "" });
+
+                const { data: userIcon } = await api.get(`core/users/${userId}/`);
+                setIcon(userIcon.iconUrl || "");
             } catch (error) {
                 console.error("Error fetching data:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
         fetchData();
-    }, []);
+    }, [navigate]);
 
     const handleEdit = (field, value) => {
         setUserData((prev) => ({ ...prev, [field]: value }));
@@ -41,7 +49,7 @@ const UserPage = () => {
 
     const updateUserData = async (field, value) => {
         try {
-            const userId = localStorage.getItem("userId");
+            const userId = localStorage.getItem('userId');
             if (userId) {
                 await api.put(`core/users/${userId}`, { [field]: value });
                 alert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
@@ -58,7 +66,7 @@ const UserPage = () => {
                 const formData = new FormData();
                 formData.append("icon", file);
 
-                const userId = localStorage.getItem("userId"); 
+                const userId = localStorage.getItem("userId");
                 if (userId) {
                     await api.post(`core/users/${userId}/upload-icon`, formData, {
                         headers: { "Content-Type": "multipart/form-data" },
@@ -75,6 +83,10 @@ const UserPage = () => {
             }
         }
     };
+
+    if (isLoading) {
+        return <div className="text-center mt-10">Loading...</div>;
+    }
 
     return (
         <div className="flex flex-col items-center justify-start p-6 h-full">
@@ -107,39 +119,25 @@ const UserPage = () => {
                     <Typography variant="h4">User Profile</Typography>
                 </CardHeader>
                 <CardBody className="flex flex-col items-center gap-4 p-6">
-                    <div className="w-full flex items-center gap-2">
-                        <div className="flex-1">
-                            <Input
-                                value={userData.name}
-                                onChange={(e) => handleEdit("name", e.target.value)}
-                                placeholder="Name"
-                                className="mb-2 placeholder:opacity-100"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="w-full flex items-center gap-2">
-                        <div className="flex-1">
-                            <Input
-                                value={userData.email}
-                                onChange={(e) => handleEdit("email", e.target.value)}
-                                placeholder="Email"
-                                className="mb-2 placeholder:opacity-100"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="w-full flex items-center gap-2">
-                        <div className="flex-1">
-                            <Input
-                                type="password"
-                                value={userData.password}
-                                onChange={(e) => handleEdit("password", e.target.value)}
-                                placeholder="Password"
-                                className="mb-2 placeholder:opacity-100"
-                            />
-                        </div>
-                    </div>
+                    <Input
+                        value={userData.name}
+                        onChange={(e) => handleEdit("name", e.target.value)}
+                        placeholder="Name"
+                        className="mb-2 placeholder:opacity-100 w-full"
+                    />
+                    <Input
+                        value={userData.email}
+                        onChange={(e) => handleEdit("email", e.target.value)}
+                        placeholder="Email"
+                        className="mb-2 placeholder:opacity-100 w-full"
+                    />
+                    <Input
+                        type="password"
+                        value={userData.password}
+                        onChange={(e) => handleEdit("password", e.target.value)}
+                        placeholder="Password"
+                        className="mb-2 placeholder:opacity-100 w-full"
+                    />
                 </CardBody>
             </Card>
 

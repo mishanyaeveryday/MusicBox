@@ -68,21 +68,35 @@ const Verify = () => {
     e.preventDefault();
 
     const otp = fullCode.join('');
+    const email = localStorage.getItem('email');
 
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}core/users/verify_otp/`,
-        {otp, email }
+        { otp, email }
       );
-      const { token } = response.data;
 
-      localStorage.setItem('token', token);
-      navigate('/user');
+      console.log('Server response:', response);
 
+      if (response.data.access && response.data.refresh && response.data.user) {
+        localStorage.setItem('token', response.data.access);
+        localStorage.setItem('userId', response.data.user.id);
+
+        const userId = localStorage.getItem('userId');
+        console.log('Fetched userId:', userId);
+
+        if (userId) {
+          navigate('/userPage');
+        } else {
+          console.error('User ID is missing from localStorage.');
+        }
+      }
     } catch (error) {
-      setMessage(error.response?.data?.message || 'Error occurred during verification.');
+      console.error("Verification error:", error);
+      setMessage(error.response?.data?.detail || 'Error occurred during verification.');
     }
   };
+
 
   return (
     <div className="centered" style={{ textAlign: "center" }}>
