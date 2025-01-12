@@ -11,7 +11,7 @@ import {
     CardFooter,
     Tooltip,
 } from "@material-tailwind/react";
-import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
+import { PlayIcon } from "@heroicons/react/24/outline";
 
 const Composition = ({ compositionId }) => {
     const { playSong } = usePlayer();
@@ -26,7 +26,7 @@ const Composition = ({ compositionId }) => {
     useEffect(() => {
         const fetchCompositionData = async () => {
             try {
-                const response = await axios.get(`/api/compositions/${compositionId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/compositions/${compositionId}`);
                 const data = response.data;
 
                 setCompositionData({

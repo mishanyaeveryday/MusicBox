@@ -22,7 +22,7 @@ export function NavbarDark() {
   const [userName, setUserName] = useState("");
   const [userPhoto, setUserPhoto] = useState("");
   const token = localStorage.getItem('token');
-  const accountId = localStorage.getItem('accountId');
+  const userId = localStorage.getItem('userId');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -39,8 +39,7 @@ export function NavbarDark() {
           return;
         }
 
-        const userResponse = await fetchUserData(accountId, token);
-        setUserPhoto(userResponse.data.person.photo);
+        const userResponse = await fetchUserData(userId, token);
         setIsLoggedIn(true);
       } catch (error) {
         console.error("Error during token validation or user fetching:", error);
@@ -58,14 +57,14 @@ export function NavbarDark() {
     return response.data.valid;
   };
 
-  const fetchUserData = async (accountId, token) => {
-    return axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${accountId}`, {
+  const fetchUserData = async (userId, token) => {
+    return axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("accountId");
+    localStorage.removeItem("userId");
     localStorage.removeItem("token");
     setIsLoggedIn(false);
     setUserPhoto("");
@@ -111,7 +110,7 @@ export function NavbarDark() {
             <Badge content="" color="indigo">
               <IconButton onClick={() => {
                 if (isLoggedIn) {
-                  navigate("/notifications");
+                  navigate("/user/notifications");
                 } else {
                   navigate("/login");
                 }
@@ -129,10 +128,10 @@ export function NavbarDark() {
                 src={userPhoto}
                 alt="User"
                 className="h-8 w-8 rounded-full cursor-pointer"
-                onClick={() => navigate("/profile")}
+                onClick={() => navigate("/user")}
               />
             ) : (
-              <IconButton onClick={() => navigate("/register")} variant="text" color="white">
+              <IconButton onClick={() => navigate("/login")} variant="text" color="white">
                 <UserIcon className="h-8 w-8" />
               </IconButton>
             )}

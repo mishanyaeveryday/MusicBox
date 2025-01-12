@@ -67,12 +67,7 @@ const Playlist = () => {
                                         </Typography>
                                     ) : (
                                         compositions.map((composition) => (
-                                            <div key={composition.id} className="composition-item">
-                                                <Typography variant="h6">{composition.title}</Typography>
-                                                <p style={{ whiteSpace: 'pre-wrap', color: 'black' }}>
-                                                    {composition.description}
-                                                </p>
-                                            </div>
+                                            <Composition compositionId={composition.id} />
                                         ))
                                     )}
                                 </div>

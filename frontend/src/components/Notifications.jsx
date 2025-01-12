@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardBody, Typography } from "@material-tailwind/react";
 import axios from "axios";
-import { useParams } from "react-router-dom";
 
 const Notifications = () => {
-    const [userId] = useParams();
     const [news, setNews] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+            console.error("User ID not found in local storage.");
+            setLoading(false);
+            return;
+        }
+
         axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/subscriptions`)
             .then((response) => {
                 const subscriptions = response.data?.subscriptions;
@@ -18,7 +23,7 @@ const Notifications = () => {
                             setNews(newsResponse.data);
                         })
                         .catch((error) => {
-                            console.error('Ошибка при загрузке новостей:', error);
+                            console.error("Error fetching news:", error);
                             setNews([]);
                         });
                 } else {
@@ -26,7 +31,7 @@ const Notifications = () => {
                 }
             })
             .catch((error) => {
-                console.error('Ошибка при загрузке подписок:', error);
+                console.error("Error fetching subscriptions:", error);
                 setNews([]);
             })
             .finally(() => {
@@ -60,7 +65,7 @@ const Notifications = () => {
                             </div>
                         ) : (
                             <Typography variant="h6" className="text-center">
-                                You don't have any notifications, we will put them her after they appears.
+                                You don't have any notifications, we will put them here after they appear.
                             </Typography>
                         )}
                     </CardBody>

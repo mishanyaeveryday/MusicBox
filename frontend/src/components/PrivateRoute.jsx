@@ -4,7 +4,6 @@ import axios from "axios";
 
 const PrivateRoute = ({ children, allowedRoles }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null);
-  const [userRole, setUserRole] = useState(null);
   const token = localStorage.getItem('token');
 
   useEffect(() => {
@@ -23,14 +22,13 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
         if (response.data.valid) {
           setIsAuthenticated(true);
-          setUserRole(response.data.role);
         } else {
-          localStorage.removeItem("accountId");
+          localStorage.removeItem("userId");
           localStorage.removeItem("token");
           window.location.reload();
         }
       } catch (error) {
-        localStorage.removeItem("accountId");
+        localStorage.removeItem("userId");
         localStorage.removeItem("token");
         window.location.reload();
         console.error('Token validation failed', error);
@@ -46,10 +44,6 @@ const PrivateRoute = ({ children, allowedRoles }) => {
 
   if (!isAuthenticated) {
     return <Navigate to="/login" />;
-  }
-
-  if (!allowedRoles.includes(userRole)) {
-    return <Navigate to="/error" />;
   }
 
   return children;

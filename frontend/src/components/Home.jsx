@@ -1,181 +1,100 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardHeader, CardBody, Button, Typography, IconButton, Tooltip, Input } from "@material-tailwind/react";
-import { PencilIcon, UserIcon } from "@heroicons/react/24/solid";
+import React, { useEffect, useState } from 'react';
+import "../design/Home.css";
+import { Button, IconButton, Typography } from "@material-tailwind/react";
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import {
+    Card,
+    CardHeader,
+    CardBody,
+    CardFooter,
+    Tooltip,
+} from "@material-tailwind/react";
+import Composition from './Composition';
+import '../design/Home.css';
 import axios from "axios";
+import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
-const api = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL,
-});
-
-const UserPage = () => {
-    const [userData, setUserData] = useState({ name: "", email: "", password: "" });
-    const [recentSongs, setRecentSongs] = useState([]);
-    const [recentArtists, setRecentArtists] = useState([]);
-    const [icon, setIcon] = useState("");
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const userEmail = localStorage.getItem("userEmail");
-                if (userEmail) {
-                    const { data } = await api.get(`core/users/email/${userEmail}/recent`);
-                    setRecentSongs(data.songs || []);
-                    setRecentArtists(data.artists || []);
-                    setUserData({ name: data.name || "", email: data.email || "", password: "" });
-
-                    const { data: userIcon } = await api.get(`/core/users/${data.id}/icon`);
-                    setIcon(userIcon.iconUrl || "");
-                }
-            } catch (error) {
-                console.error("Error fetching data:", error);
-            }
-        };
-
-        fetchData();
-    }, []);
-
-    const handleEdit = (field, value) => {
-        setUserData((prev) => ({ ...prev, [field]: value }));
-        updateUserData(field, value);
-    };
-
-    const updateUserData = async (field, value) => {
-        try {
-            const userEmail = localStorage.getItem("userEmail");
-            if (userEmail) {
-                await api.put(`/core/users/${userEmail}`, { [field]: value });
-                alert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
-            }
-        } catch (error) {
-            console.error(`Error updating ${field}:`, error);
-        }
-    };
-
-    const handleFileUpload = async (event) => {
-        const file = event.target.files[0];
-        if (file) {
-            try {
-                const formData = new FormData();
-                formData.append("icon", file);
-
-                const userEmail = localStorage.getItem("userEmail");
-                if (userEmail) {
-                    await api.post(`/core/users/${userEmail}/upload-icon`, formData, {
-                        headers: { "Content-Type": "multipart/form-data" },
-                    });
-
-                    const { data: userIcon } = await api.get(`/core/users/${userEmail}/icon`);
-                    setIcon(userIcon.iconUrl || "");
-
-                    alert("Icon updated successfully!");
-                }
-            } catch (error) {
-                console.error("Error uploading file:", error);
-                alert("Failed to upload icon.");
-            }
-        }
-    };
+const Library = ({ isLoggedIn, isEmptyPlaylists, isEmptyCompositors }) => {
+    const navigate = useNavigate();
 
     return (
-        <div className="flex flex-col items-center justify-start p-6 h-full">
-            <div className="relative w-32 h-32">
-                <div className="rounded-full bg-gray-300 flex items-center justify-center w-full h-full">
-                    {icon ? (
-                        <img src={icon} alt="User Icon" className="h-16 w-16 rounded-full" />
-                    ) : (
-                        <UserIcon className="h-16 w-16 text-gray-700" />
-                    )}
-                </div>
-                <Tooltip content="Edit" placement="bottom">
-                    <label className="!absolute right-0 bottom-0 cursor-pointer">
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileUpload}
-                            className="!absolute p-1"
-                            style={{ zIndex: "100", opacity: "0", width: "30px" }}
-                        />
-                        <IconButton size="sm">
-                            <PencilIcon className="h-5 w-5" />
+        <div className="h-full">
+            <Card className="h-full shadowHalf">
+                <CardHeader floated={false} className="bg-0">
+                    <div className="flex gap-2 justify-between">
+                        <IconButton variant="text" color="white" className="rounded">
+                            <QueueListIcon className="h-6 w-6" />
                         </IconButton>
-                    </label>
-                </Tooltip>
-            </div>
-
-            <Card className="w-full max-w-lg mt-6">
-                <CardHeader floated={false} shadow={false} className="bg-gray-100 p-4 text-center">
-                    <Typography variant="h4">User Profile</Typography>
+                        <Typography variant="h3">My media library</Typography>
+                        <IconButton
+                            onClick={() => navigate(isLoggedIn ? "/user/createPlaylist" : "/login")}
+                            variant="text"
+                            color="white"
+                            className="rounded"
+                        >
+                            <PlusIcon className="h-6 w-6" />
+                        </IconButton>
+                    </div>
                 </CardHeader>
-                <CardBody className="flex flex-col items-center gap-4 p-6">
-                    <div className="w-full flex items-center gap-2">
-                        <div className="flex-1">
-                            <Input
-                                value={userData.name}
-                                onChange={(e) => handleEdit("name", e.target.value)}
-                                placeholder="Name"
-                                className="mb-2 placeholder:opacity-100"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="w-full flex items-center gap-2">
-                        <div className="flex-1">
-                            <Input
-                                value={userData.email}
-                                onChange={(e) => handleEdit("email", e.target.value)}
-                                placeholder="Email"
-                                className="mb-2 placeholder:opacity-100"
-                            />
-                        </div>
-                    </div>
-
-                    <div className="w-full flex items-center gap-2">
-                        <div className="flex-1">
-                            <Input
-                                type="password"
-                                value={userData.password}
-                                onChange={(e) => handleEdit("password", e.target.value)}
-                                placeholder="Password"
-                                className="mb-2 placeholder:opacity-100"
-                            />
-                        </div>
-                    </div>
-                </CardBody>
-            </Card>
-
-            <Card className="w-full max-w-lg mt-6">
-                <CardHeader floated={false} shadow={false} className="bg-gray-100 p-4 text-center">
-                    <Typography variant="h5">Recently Played Songs</Typography>
-                </CardHeader>
-                <CardBody className="flex flex-col gap-2 p-4">
-                    {recentSongs.length > 0 ? (
-                        recentSongs.map((song, index) => (
-                            <Typography key={index} className="text-gray-700">
-                                {index + 1}. {song}
+                <CardBody className="text-center">
+                    {isEmptyPlaylists ? (
+                        <div className="flex flex-col text-left p-6 shadowFull">
+                            <Typography className="mb-2" variant="h5" color="white">
+                                Create your first playlist
                             </Typography>
-                        ))
+                            <Typography className="mb-2 ml-2" variant="h7">
+                                We will help you
+                            </Typography>
+                            <Button
+                                onClick={() => navigate(isLoggedIn ? "/user/createPlaylist" : "/login")}
+                                className="w-56"
+                                color="white"
+                            >
+                                Create playlist
+                            </Button>
+                        </div>
                     ) : (
-                        <Typography className="text-gray-500 text-center">
-                            You haven’t listened to any songs yet.
-                        </Typography>
+                        <div>
+                            {/* Контент для плейлистов */}
+                        </div>
+                    )}
+                    {!isEmptyCompositors && (
+                        <div>
+                            {/* Контент для композиторов */}
+                        </div>
                     )}
                 </CardBody>
+                <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>
             </Card>
+        </div>
+    );
+};
 
-            <Card className="w-full max-w-lg mt-6">
-                <CardHeader floated={false} shadow={false} className="bg-gray-100 p-4 text-center">
-                    <Typography variant="h5">Recently Played Artists</Typography>
-                </CardHeader>
-                <CardBody className="flex flex-col gap-2 p-4">
-                    {recentArtists.length > 0 ? (
-                        recentArtists.map((artist, index) => (
-                            <Typography key={index} className="text-gray-700">
-                                {index + 1}. {artist}
-                            </Typography>
+const Playlists = () => {
+    const [playlists, setPlaylists] = useState([]);
+
+    useEffect(() => {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/`)
+            .then((res) => setPlaylists(res.data))
+            .catch((error) => console.error("Error fetching playlists:", error));
+    }, []);
+
+    return (
+        <div className="h-full">
+            <Card className="h-full shadowHalf flex flex-col overflow-y-scroll">
+                <CardBody className="text-center flex flex-col">
+                    {playlists.length > 0 ? (
+                        playlists.map((playlist) => (
+                            <Playlist
+                                key={playlist.id}
+                                id={playlist.id}
+                                name={playlist.name}
+                            />
                         ))
                     ) : (
-                        <Typography className="text-gray-500 text-center">
-                            You haven’t listened to any artists yet.
+                        <Typography variant="h6" color="gray">
+                            No playlists available
                         </Typography>
                     )}
                 </CardBody>
@@ -184,4 +103,88 @@ const UserPage = () => {
     );
 };
 
-export default UserPage;
+
+const Playlist = ({ id, name }) => {
+    const [compositions, setCompositions] = useState([]);
+
+    useEffect(() => {
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${id}/compositions/`)
+            .then((res) => setCompositions(res.data))
+            .catch((error) => console.error(`Error fetching compositions for playlist ${id}:`, error));
+    }, [id]);
+
+    return (
+        <div>
+            <div className="relative">
+                <Typography variant="h6" className="text-white text-left ml-6">
+                         {name.length > 20 ? `${name.slice(0, 20)}...` : name}
+                    <Link
+                        to={`/playlist/${name}`}
+                        className="text-white hover:underline"
+                        style={{
+                            fontFamily: "Arsenal",
+                            position: "absolute",
+                            right: 0,
+                            top: "50%",
+                            transform: "translateY(-50%)",
+                        }}
+                    >
+                        Show all
+                    </Link>
+                </Typography>
+            </div>
+            <div className="text-center flex flex-row justify-between">
+                {compositions.map((composition) => (
+                    <Composition key={composition.id} data={composition} />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+
+const Home = () => {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [isEmptyPlaylists, setIsEmptyPlaylists] = useState(false);
+    const [isEmptyCompositors, setIsEmptyCompositors] = useState(false);
+
+    useEffect(() => {
+        const token = localStorage.getItem('token');
+        if (!token) {
+            setIsLoggedIn(false);
+            return;
+        }
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((res) => {
+                if (res.data.valid) setIsLoggedIn(true);
+                else {
+                    localStorage.removeItem("token");
+                    setIsLoggedIn(false);
+                }
+            })
+            .catch(() => setIsLoggedIn(false));
+    }, []);
+
+    return (
+        <div>
+            <div className="intro back1">
+                <div className="flex flex-row w-full">
+                    <div className="w-1/3 h-full p-6">
+                        <Library
+                            isLoggedIn={isLoggedIn}
+                            isEmptyPlaylists={isEmptyPlaylists}
+                            isEmptyCompositors={isEmptyCompositors}
+                        />
+                    </div>
+                    <div className="w-2/3 h-full p-6">
+                        <Playlists />
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+export default Home;
