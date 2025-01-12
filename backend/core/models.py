@@ -96,8 +96,8 @@ class Composition(models.Model):
         upload_to='images/cover/', blank=True, max_length=100)
     style = models.CharField(max_length=255, default='')
     audio_file = models.FileField(upload_to='audio/')
-    playlist_id = models.ForeignKey(
-        Playlist, on_delete=models.CASCADE, null=True, blank=True)
+    playlist_id = models.ManyToManyField(
+        Playlist, blank=True)
 
     def __str__(self):
         return self.name

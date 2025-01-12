@@ -217,16 +217,14 @@ def playlist_detail(request, pk):
 @api_view(['GET'])
 def get_compositions_from_playlist(request, pk):
     try:
-        compositions = Composition.objects.filter(pk=pk)
-
-        if not compositions.exists():
-            return Response({"detail": "No compositions found in this playlist."}, status=status.HTTP_404_NOT_FOUND)
-
-        serializer = CompositionSerializer(compositions, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-    except Exception as e:
-        return Response({"detail": f"Server error: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+        playlist = Playlist.objects.get(pk=pk)
+    except Playlist.DoesNotExist:
+        return Response({"detail": "Playlist not found."}, status=status.HTTP_404_NOT_FOUND)
+    compositions = playlist.compositions.all()
+    if not compositions.exists():
+        return Response({"detail": "No compositions found in this playlist."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = CompositionSerializer(compositions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
