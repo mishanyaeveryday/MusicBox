@@ -15,8 +15,56 @@ import '../design/Home.css';
 import axios from "axios";
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
-const Library = ({ isLoggedIn, isEmptyPlaylists, isEmptyCompositors }) => {
+const Library = ({ isLoggedIn }) => {
+    const [isEmptyPlaylists, setIsEmptyPlaylists] = useState(true);
+    const [playlists, setPlaylists] = useState([]);
+    const [isEmptyCompositors, setIsEmptyCompositors] = useState(true);
+    const [compositors, setCompositors] = useState([]);
+    const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const userId = localStorage.getItem("userId");
+    
+        if (!userId) {
+            console.error("Пользователь не авторизован");
+            setLoading(false);
+            return;
+        }
+    
+        axios
+            .get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/library`)
+            .then((response) => {
+                const { playlists, compositors } = response.data || {};
+    
+                if (playlists?.length > 0) {
+                    setIsEmptyPlaylists(false);
+                    setPlaylists(playlists);
+                } else {
+                    setIsEmptyPlaylists(true);
+                }
+                if (compositors?.length > 0) {
+                    setIsEmptyCompositors(false);
+                    setCompositors(compositors);
+                } else {
+                    setIsEmptyCompositors(true);
+                }
+            })
+            .catch((error) => {
+                console.error("Ошибка при загрузке данных библиотеки:", error);
+            })
+            .finally(() => {
+                setLoading(false);
+            });
+    }, []);
+    
+    if (loading) {
+        return (
+            <div className="flex justify-center items-center h-full">
+                <Typography variant="h5">Loading...</Typography>
+            </div>
+        );
+    }
 
     return (
         <div className="h-full">
@@ -38,7 +86,7 @@ const Library = ({ isLoggedIn, isEmptyPlaylists, isEmptyCompositors }) => {
                     </div>
                 </CardHeader>
                 <CardBody className="text-center">
-                    {isEmptyPlaylists ? (
+                    {isEmptyPlaylists === true ? (
                         <div className="flex flex-col text-left p-6 shadowFull">
                             <Typography className="mb-2" variant="h5" color="white">
                                 Create your first playlist
@@ -55,13 +103,26 @@ const Library = ({ isLoggedIn, isEmptyPlaylists, isEmptyCompositors }) => {
                             </Button>
                         </div>
                     ) : (
-                        <div>
-                            {/* Контент для плейлистов */}
+                        <div className="flex flex-col gap-4">
+                            {playlists.map((playlist) => (
+                                <div key={playlist.id} className="p-4 border rounded-md shadow-sm bg-white">
+                                    <Typography variant="h5">{playlist.name}</Typography>
+                                    <Typography className="text-gray-600">{playlist.description}</Typography>
+                                </div>
+                            ))}
                         </div>
                     )}
-                    {!isEmptyCompositors && (
-                        <div>
-                            {/* Контент для композиторов */}
+                    {isEmptyCompositors === false && (
+                        <div className="mt-6">
+                            <Typography variant="h5" className="mb-4">Compositors</Typography>
+                            <div className="flex flex-col gap-4">
+                                {compositors.map((compositor) => (
+                                    <div key={compositor.id} className="p-4 border rounded-md shadow-sm bg-white">
+                                        <Typography variant="h5">{compositor.name}</Typography>
+                                        <Typography className="text-gray-600">{compositor.description}</Typography>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
                     )}
                 </CardBody>
@@ -70,6 +131,8 @@ const Library = ({ isLoggedIn, isEmptyPlaylists, isEmptyCompositors }) => {
         </div>
     );
 };
+
+
 
 const Playlists = () => {
     const [playlists, setPlaylists] = useState([]);
@@ -119,7 +182,7 @@ const Playlist = ({ id, name }) => {
                 <Typography variant="h6" className="text-white text-left ml-6">
                          {name.length > 20 ? `${name.slice(0, 20)}...` : name}
                     <Link
-                        to={`/playlist/${name}`}
+                        to={`/playlist/${id}`}
                         className="text-white hover:underline"
                         style={{
                             fontFamily: "Arsenal",
@@ -145,8 +208,6 @@ const Playlist = ({ id, name }) => {
 
 const Home = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const [isEmptyPlaylists, setIsEmptyPlaylists] = useState(false);
-    const [isEmptyCompositors, setIsEmptyCompositors] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -174,8 +235,6 @@ const Home = () => {
                     <div className="w-1/3 h-full p-6">
                         <Library
                             isLoggedIn={isLoggedIn}
-                            isEmptyPlaylists={isEmptyPlaylists}
-                            isEmptyCompositors={isEmptyCompositors}
                         />
                     </div>
                     <div className="w-2/3 h-full p-6">
