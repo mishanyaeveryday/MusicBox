@@ -38,7 +38,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=255, blank=True, default='')
     surname = models.CharField(max_length=255, blank=True, default='')
     avatar = models.ImageField(
-        upload_to='images/avatar/', blank=True, max_length=100)
+        upload_to='images/avatar/', blank=True, max_length=100, default='images/default_avatar.png')
     is_active = models.BooleanField(default=True)
     is_superuser = models.BooleanField(default=False)
     is_staff = models.BooleanField(default=False)
@@ -66,7 +66,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Playlist(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    name = models.CharField(max_length=255, default='')
+    name = models.CharField(max_length=30, default='')
     compositions = models.ManyToManyField('Composition', blank=True)
     image = models.ImageField(
         upload_to='images/cover/', blank=True, max_length=100)
@@ -84,7 +84,7 @@ def validate_single_word(value):
 class Composition(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
-    name = models.CharField(max_length=255, default='')
+    name = models.CharField(max_length=30, default='')
     category = models.CharField(
         max_length=12,
         default='',
