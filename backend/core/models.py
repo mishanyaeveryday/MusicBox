@@ -112,3 +112,16 @@ class History(models.Model):
         compositions_names = ", ".join(
             [composition.name for composition in self.compositions.all()])
         return f"Listening to: {compositions_names} at {self.time_of_listening}" if compositions_names else f"Listening at {self.time_of_listening}"
+
+
+class Notification(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    title = models.CharField(max_length=30, blank=False)
+    description = models.TextField()
+    image = models.ImageField(
+        upload_to='images/notifications/', blank=True, max_length=100)
+    users = models.ManyToManyField(
+        User, blank=True)
+
+    def __str__(self):
+        return self.title

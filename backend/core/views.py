@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .utils import send_otp, send_info_about_created_account
-from .models import User, Playlist, Composition, History
-from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer
+from .models import User, Playlist, Composition, History, Notification
+from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer, NotificationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.utils import timezone
 from rest_framework.views import APIView
@@ -280,7 +280,6 @@ def get_compositions_by_category(request, category):
 
 
 @ api_view(['GET'])
-@ permission_classes([IsAuthenticated])
 def get_history(request):
     histories = History.objects.all()
     serializer = HistorySerializer(histories, many=True)
@@ -316,3 +315,41 @@ def history_detail(request, pk):
         history.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_notifications(request, pk):
+    common_notifications = Notification.objects.filter(users__isnull=True)
+    personal_notifications = Notification.objects.filter(users=pk)
+    notifications = common_notifications | personal_notifications
+
+    serializer = NotificationSerializer(notifications.distinct(), many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET', 'PUT', 'DELETE'])
+@permission_classes([IsAuthenticated])
+def notification_detail(request, pk):
+    try:
+        notification = Notification.objects.get(pk=pk)
+    except Notification.DoesNotExist:
+        return Response({"error": "Notification not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = NotificationSerializer(notification)
+        return Response(serializer.data)
+
+    elif request.method == 'PUT':
+        if not request.user.is_staff and not request.user.is_superuser:
+            return Response({"error": "Permission denied"}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = NotificationSerializer(notification, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    elif request.method == 'DELETE':
+        notification.delete()
+        return Response({"message": "Notification deleted successfully"}, status=status.HTTP_204_NO_CONTENT)
+    return Response({"error": "Method not allowed"}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
