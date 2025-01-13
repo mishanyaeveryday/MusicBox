@@ -1,146 +1,98 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useState } from "react";
 import axios from "axios";
 import { Card, CardHeader, CardBody, CardFooter, Typography, Input, Button } from "@material-tailwind/react";
+import { useNavigate } from "react-router-dom";
 
 const CreatePlaylist = () => {
-    const { userId } = useParams();
     const [playlistName, setPlaylistName] = useState('');
     const [playlistImage, setPlaylistImage] = useState(null);
-    const [compositions, setCompositions] = useState([]);
-    const [addedCompositions, setAddedCompositions] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/playlists`)
-            .then((response) => {
-                const playlist = response.data;
-                setPlaylistName(playlist.name);
-                setPlaylistImage(playlist.image);
-                setCompositions(playlist.compositions);
-            })
-            .catch((error) => {
-                console.error("Ошибка при загрузке данных плейлиста:", error);
-            })
-            .finally(() => setLoading(false));
-    }, [userId]);
+    const [description, setDescription] = useState('');
+    const navigate = useNavigate();
 
     const handleNameChange = (e) => {
         setPlaylistName(e.target.value);
     };
 
-    const handleAddComposition = (composition) => {
-        if (!addedCompositions.includes(composition)) {
-            setAddedCompositions([...addedCompositions, composition]);
-        }
+    const handleDescriptionChange = (e) => {
+        setDescription(e.target.value);
     };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setPlaylistImage(URL.createObjectURL(file));
+            setPlaylistImage(file);
         }
     };
 
     const handleSave = () => {
-        const updatedPlaylist = {
-            name: playlistName,
-            image: playlistImage,
-            compositions: addedCompositions,
-        };
-        axios.put(`core/playlists/${userId}`, updatedPlaylist)
-            .then((response) => {
-                alert("Плейлист успешно обновлен");
+        const formData = new FormData();
+        formData.append('name', playlistName);
+        formData.append('description', description);
+        if (playlistImage) {
+            formData.append('image', playlistImage);
+        }
+
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}core/playlists/create/`, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        })
+            .then(() => {
+                navigate("/");
             })
             .catch((error) => {
-                console.error("Ошибка при сохранении плейлиста:", error);
+                console.error("Error creating playlist:", error.response?.data || error.message);
             });
     };
 
-    if (loading) {
-        return <div>Загрузка...</div>;
-    }
-
     return (
-        <div className="intro back1">
-            <div className="flex flex-row w-full">
-                <div className="h-full w-full">
-                    <Card className="h-full w-full shadowHalf">
-                        <CardHeader floated={false} className="bg-0 text-center">
-                            <Typography variant="h3" className="text-center">
-                                Создание плейлиста
-                            </Typography>
-                        </CardHeader>
-                        <CardBody className="text-center">
-                            <div className="grid grid-cols-1 gap-4">
-                                <Input
-                                    label="Название плейлиста"
-                                    value={playlistName}
-                                    onChange={handleNameChange}
-                                />
-                                <div>
-                                    <label className="block">Изображение плейлиста</label>
-                                    <input
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handleImageChange}
-                                    />
-                                    {playlistImage && (
-                                        <img
-                                            src={playlistImage}
-                                            alt="Playlist"
-                                            className="mt-4 w-32 h-32 object-cover mx-auto"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <Typography variant="h5">Список песен</Typography>
-                                    <div className="grid grid-cols-5 gap-4 mt-4">
-                                        {compositions.map((composition) => (
-                                            <div key={composition.id} className="text-center">
-                                                <Typography>{composition.name}</Typography>
-                                                <Button
-                                                    size="sm"
-                                                    color="green"
-                                                    onClick={() => handleAddComposition(composition)}
-                                                >
-                                                    Добавить
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div className="mt-4">
-                                    <Typography variant="h5">Добавленные песни</Typography>
-                                    <div>
-                                        {addedCompositions.map((composition, index) => (
-                                            <div key={index} className="flex justify-between">
-                                                <Typography>{composition.name}</Typography>
-                                                <Button
-                                                    size="sm"
-                                                    color="red"
-                                                    onClick={() =>
-                                                        setAddedCompositions(
-                                                            addedCompositions.filter((item) => item !== composition)
-                                                        )
-                                                    }
-                                                >
-                                                    Удалить
-                                                </Button>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </CardBody>
-                        <CardFooter className="flex justify-center gap-7 pt-2">
-                            <Button color="blue" onClick={handleSave}>
-                                Сохранить плейлист
-                            </Button>
-                        </CardFooter>
-                    </Card>
-                </div>
-            </div>
+        <div className="back1 flex justify-center items-center min-h-screen bg-0">
+            <Card className="w-full max-w-4xl shadowHalf">
+                <CardHeader floated={false} className="text-center shadowFull py-4">
+                    <Typography variant="h4">Create a Playlist</Typography>
+                </CardHeader>
+                <CardBody className="space-y-6">
+                    <div>
+                        <Input
+                            label="Playlist Name"
+                            value={playlistName}
+                            color="white"
+                            onChange={handleNameChange}
+                            className="w-full"
+                        />
+                    </div>
+                    <div>
+                        <Input
+                            label="Playlist Description"
+                            value={description}
+                            color="white"
+                            onChange={handleDescriptionChange}
+                            className="w-full"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-white">Playlist Image</label>
+                        <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageChange}
+                            className="block w-full mt-2"
+                        />
+                        {playlistImage && (
+                            <img
+                                src={URL.createObjectURL(playlistImage)}
+                                alt="Playlist"
+                                className="mt-4 w-32 h-32 object-cover mx-auto rounded-md shadow-md"
+                            />
+                        )}
+                    </div>
+                </CardBody>
+                <CardFooter className="flex justify-center py-4">
+                    <Button onClick={handleSave} className="px-6">
+                        Save Playlist
+                    </Button>
+                </CardFooter>
+            </Card>
         </div>
     );
 };

@@ -15,11 +15,10 @@ import '../design/Home.css';
 import axios from "axios";
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
-const Library = ({ isLoggedIn }) => {
+const Library = () => {
     const [isEmptyPlaylists, setIsEmptyPlaylists] = useState(true);
+    const [isLoggedIn, setIsLogin] = useState(true);
     const [playlists, setPlaylists] = useState([]);
-    const [isEmptyCompositors, setIsEmptyCompositors] = useState(true);
-    const [compositors, setCompositors] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -29,6 +28,7 @@ const Library = ({ isLoggedIn }) => {
         if (!userId) {
             console.error("Пользователь не авторизован");
             setLoading(false);
+            setIsLogin(false);
             return;
         }
     
@@ -42,12 +42,6 @@ const Library = ({ isLoggedIn }) => {
                     setPlaylists(playlists);
                 } else {
                     setIsEmptyPlaylists(true);
-                }
-                if (compositors?.length > 0) {
-                    setIsEmptyCompositors(false);
-                    setCompositors(compositors);
-                } else {
-                    setIsEmptyCompositors(true);
                 }
             })
             .catch((error) => {
@@ -110,19 +104,6 @@ const Library = ({ isLoggedIn }) => {
                                     <Typography className="text-gray-600">{playlist.description}</Typography>
                                 </div>
                             ))}
-                        </div>
-                    )}
-                    {isEmptyCompositors === false && (
-                        <div className="mt-6">
-                            <Typography variant="h5" className="mb-4">Compositors</Typography>
-                            <div className="flex flex-col gap-4">
-                                {compositors.map((compositor) => (
-                                    <div key={compositor.id} className="p-4 border rounded-md shadow-sm bg-white">
-                                        <Typography variant="h5">{compositor.name}</Typography>
-                                        <Typography className="text-gray-600">{compositor.description}</Typography>
-                                    </div>
-                                ))}
-                            </div>
                         </div>
                     )}
                 </CardBody>
@@ -207,35 +188,12 @@ const Playlist = ({ id, name }) => {
 
 
 const Home = () => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false);
-
-    useEffect(() => {
-        const token = localStorage.getItem('token');
-        if (!token) {
-            setIsLoggedIn(false);
-            return;
-        }
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token`, {
-            headers: { Authorization: `Bearer ${token}` },
-        })
-            .then((res) => {
-                if (res.data.valid) setIsLoggedIn(true);
-                else {
-                    localStorage.removeItem("token");
-                    setIsLoggedIn(false);
-                }
-            })
-            .catch(() => setIsLoggedIn(false));
-    }, []);
-
     return (
         <div>
             <div className="intro back1">
                 <div className="flex flex-row w-full">
                     <div className="w-1/3 h-full p-6">
-                        <Library
-                            isLoggedIn={isLoggedIn}
-                        />
+                        <Library/>
                     </div>
                     <div className="w-2/3 h-full p-6">
                         <Playlists />

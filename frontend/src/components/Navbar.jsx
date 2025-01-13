@@ -40,7 +40,11 @@ export function NavbarDark() {
         }
 
         const userResponse = await fetchUserData(userId, token);
-        setIsLoggedIn(true);
+        if (userResponse && userResponse.data) {
+          setIsLoggedIn(true);
+          setUserName(userResponse.data.name);
+          setUserPhoto(userResponse.data.avatar || "/images/default_avatar.png");
+        }
       } catch (error) {
         console.error("Error during token validation or user fetching:", error);
         handleLogout();
@@ -125,7 +129,7 @@ export function NavbarDark() {
           <div className="flex gap-1 md:mx-1">
             {isLoggedIn ? (
               <img
-                src={userPhoto}
+                src={userPhoto || "/images/default_avatar.png"}
                 alt="User"
                 className="h-8 w-8 rounded-full cursor-pointer"
                 onClick={() => navigate("/user")}
