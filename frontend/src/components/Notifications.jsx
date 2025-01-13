@@ -14,7 +14,7 @@ const Notifications = () => {
             return;
         }
 
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/subscriptions`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/notification`)
             .then((response) => {
                 const subscriptions = response.data?.subscriptions;
                 if (subscriptions?.length > 0) {

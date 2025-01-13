@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, Playlist, Composition, History
+from .models import User, Playlist, Composition, History, Notification
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,4 +23,10 @@ class CompositionSerializer(serializers.ModelSerializer):
 class HistorySerializer(serializers.ModelSerializer):
     class Meta:
         model = History
+        fields = '__all__'
+
+
+class NotificationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notification
         fields = '__all__'
