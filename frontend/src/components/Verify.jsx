@@ -86,7 +86,7 @@ const Verify = () => {
         console.log('Fetched userId:', userId);
 
         if (userId) {
-          navigate('/userPage');
+          navigate('/user/');
         } else {
           console.error('User ID is missing from localStorage.');
         }

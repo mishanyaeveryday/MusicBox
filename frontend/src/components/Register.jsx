@@ -37,7 +37,8 @@ const RegisterForm = () => {
 
     try {
       const response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/users/create/`, dataToSend);
-      if (response.data.success) {
+      if (response.status==201) {
+        console.log(dataToSend);
         setMessage("Registration successful!");
         navigate("/login");
       } else {
