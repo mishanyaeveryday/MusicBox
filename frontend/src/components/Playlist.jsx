@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { Card, IconButton, CardBody, CardFooter, Typography } from "@material-tailwind/react";
 import axios from "axios";
 import { PlayIcon } from "@heroicons/react/24/outline";
+import Composition from './Composition';
 
 const Playlist = () => {
     const { playlistId } = useParams();
