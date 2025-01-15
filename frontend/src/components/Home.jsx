@@ -24,19 +24,19 @@ const Library = () => {
 
     useEffect(() => {
         const userId = localStorage.getItem("userId");
-    
+
         if (!userId) {
             console.error("Пользователь не авторизован");
             setLoading(false);
             setIsLogin(false);
             return;
         }
-    
+
         axios
             .get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/library`)
             .then((response) => {
                 const { playlists, compositors } = response.data || {};
-    
+
                 if (playlists?.length > 0) {
                     setIsEmptyPlaylists(false);
                     setPlaylists(playlists);
@@ -51,7 +51,7 @@ const Library = () => {
                 setLoading(false);
             });
     }, []);
-    
+
     if (loading) {
         return (
             <div className="flex justify-center items-center h-full">
@@ -161,7 +161,7 @@ const Playlist = ({ id, name }) => {
         <div>
             <div className="relative">
                 <Typography variant="h6" className="text-white text-left ml-6">
-                         {name.length > 20 ? `${name.slice(0, 20)}...` : name}
+                    {name.length > 20 ? `${name.slice(0, 20)}...` : name}
                     <Link
                         to={`/playlist/${id}`}
                         className="text-white hover:underline"
@@ -179,7 +179,8 @@ const Playlist = ({ id, name }) => {
             </div>
             <div className="text-center flex flex-row justify-between">
                 {compositions.map((composition) => (
-                    <Composition key={composition.id} data={composition} />
+                    <Composition compositionId={composition.id} />
+
                 ))}
             </div>
         </div>
@@ -193,7 +194,7 @@ const Home = () => {
             <div className="intro back1">
                 <div className="flex flex-row w-full">
                     <div className="w-1/3 h-full p-6">
-                        <Library/>
+                        <Library />
                     </div>
                     <div className="w-2/3 h-full p-6">
                         <Playlists />

@@ -15,10 +15,10 @@ import { PlayIcon } from "@heroicons/react/24/outline";
 
 const Composition = ({ compositionId }) => {
     const { playSong } = usePlayer();
-    
+
     const [compositionData, setCompositionData] = useState({
-        title: '',
-        composer: '',
+        name: '',
+        author: '',
         imageUrl: '',
         songUrl: '',
     });
@@ -29,11 +29,14 @@ const Composition = ({ compositionId }) => {
                 const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/compositions/${compositionId}`);
                 const data = response.data;
 
+                const response2 = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${data.user_id}`);
+                const data2 = response2.data;
+
                 setCompositionData({
-                    title: data.title,
-                    composer: data.composer,
-                    imageUrl: data.imageUrl,
-                    songUrl: data.songUrl,
+                    name: data.name,
+                    author: data2.username,
+                    imageUrl: data.image,
+                    songUrl: data.audio_file,
                 });
             } catch (error) {
                 console.error("Error fetching composition data:", error);
@@ -64,10 +67,10 @@ const Composition = ({ compositionId }) => {
                 </div>
                 <CardBody className="p-1">
                     <Typography variant="p" className="text-xs text-left">
-                        {compositionData.title || "Name"}
+                        {compositionData.name || "Name"}
                     </Typography>
                     <Typography variant="p" className="text-xs text-left">
-                        {compositionData.composer || "Compositor"}
+                        {compositionData.author || "Compositor"}
                     </Typography>
                 </CardBody>
                 <CardFooter className="p-1">

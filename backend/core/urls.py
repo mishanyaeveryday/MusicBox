@@ -17,7 +17,7 @@ urlpatterns = [
     path('playlists/<uuid:pk>/compositions/',
          get_compositions_from_playlist, name='get_compositions_from_playlist'),
     path('compositions/', get_compositions, name='get_compositions'),
-    path('compositions/<str:category>', get_compositions_by_category,
+    path('compositions/cat/<str:category>', get_compositions_by_category,
          name='get_compositions_by_category'),
     path('compositions/create/', create_composition, name='create_composition'),
     path('compositions/<uuid:pk>/', composition_detail, name='composition_detail'),

@@ -15,13 +15,20 @@ const Playlist = () => {
     useEffect(() => {
         axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}`)
             .then((response) => {
-                setCompositions(response.data.compositions || []);
-                setPlaylistIcon(response.data.image || "");
-                setPlaylistName(response.data.name || "Untitled Playlist");
-                setPlaylistDescription(response.data.description || "No description available.");
+                setPlaylistIcon(response.data.image);
+                setPlaylistName(response.data.name);
+                setPlaylistDescription(response.data.description);
             })
             .catch((error) => {
                 console.error("Error fetching playlist data:", error);
+            });
+
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}/compositions`)
+            .then((response) => {
+                setCompositions(response.data || []);
+            })
+            .catch((error) => {
+                console.error("Error fetching compositions data:", error);
             });
     }, [playlistId]);
 
