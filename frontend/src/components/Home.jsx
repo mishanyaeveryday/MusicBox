@@ -35,7 +35,7 @@ const Library = () => {
         axios
             .get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/library`)
             .then((response) => {
-                const { playlists, compositors } = response.data || {};
+                const { playlists } = response.data || {};
 
                 if (playlists?.length > 0) {
                     setIsEmptyPlaylists(false);
@@ -45,7 +45,7 @@ const Library = () => {
                 }
             })
             .catch((error) => {
-                console.error("Ошибка при загрузке данных библиотеки:", error);
+                console.error("Error:", error);
             })
             .finally(() => {
                 setLoading(false);
@@ -83,7 +83,7 @@ const Library = () => {
                     {isEmptyPlaylists === true ? (
                         <div className="flex flex-col text-left p-6 shadowFull">
                             <Typography className="mb-2" variant="h5" color="white">
-                                Create your first playlist
+                                Create your playlist
                             </Typography>
                             <Typography className="mb-2 ml-2" variant="h7">
                                 We will help you
@@ -178,7 +178,7 @@ const Playlist = ({ id, name }) => {
                 </Typography>
             </div>
             <div
-                className="text-center flex flex-row justify-start overflow-x-auto"
+                className="text-center flex flex-row justify-start overflow-x-scroll overflow-y-hidden"
                 style={{ maxWidth: "100%", whiteSpace: "nowrap" }}
             >
                 {compositions.map((composition) => (

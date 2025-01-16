@@ -11,6 +11,7 @@ import Footer from './components/Footer';
 import Navbar from './components/Navbar';
 import Verify from './components/Verify';
 import Notifications from './components/Notifications';
+import AddToPlaylist from './components/AddToPlaylist';
 import PrivateRoute from './components/PrivateRoute';
 import UserPage from './components/UserPage';
 import CreatePlaylist from './components/CreatePlaylist';
@@ -34,6 +35,7 @@ function App() {
               <Route path="*" element={<Error />}></Route>
               <Route index element={<UserPage />} />
               <Route path="/createPlaylist" element={<CreatePlaylist />} />
+              <Route path="/addToPlaylist" element={<AddToPlaylist />} />
               <Route path="/notifications" element={<Notifications />} />
             </Routes>
           </PrivateRoute>} />

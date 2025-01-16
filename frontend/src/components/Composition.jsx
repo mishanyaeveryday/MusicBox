@@ -4,6 +4,7 @@ import { usePlayer } from './PlayerContext';
 import { Button, IconButton, Typography } from "@material-tailwind/react";
 import { Link } from "react-router-dom";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 import {
     Card,
     CardHeader,
@@ -12,9 +13,11 @@ import {
     Tooltip,
 } from "@material-tailwind/react";
 import { PlayIcon } from "@heroicons/react/24/outline";
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 const Composition = ({ compositionId }) => {
     const { playSong } = usePlayer();
+    const navigate = useNavigate();
 
     const [compositionData, setCompositionData] = useState({
         name: '',
@@ -46,6 +49,12 @@ const Composition = ({ compositionId }) => {
         fetchCompositionData();
     }, [compositionId]);
 
+    const handleAddToPlaylist = () => {
+        localStorage.setItem('selectedCompositionId', compositionId);
+
+        navigate('/user/addToPlaylist');
+    };
+
     return (
         <div>
             <Card className="w-44 h-36 shadowFull m-1 cursor-pointer hover:bg-gray-500/10">
@@ -59,6 +68,13 @@ const Composition = ({ compositionId }) => {
                             }
                             alt="card-image"
                         />
+                        <IconButton
+                            size="sm"
+                            className="!absolute bottom-0 right-12 m-2"
+                            onClick={() => handleAddToPlaylist()}
+                        >
+                            <PlusIcon className="h-5 w-5" />
+                        </IconButton>
                         <IconButton
                             size="sm"
                             className="!absolute bottom-0 right-0 m-2"
