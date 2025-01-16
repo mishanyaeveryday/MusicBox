@@ -68,7 +68,7 @@ const Playlist = () => {
                     <div className="h-full w-full">
                         <Card className="h-full w-full bg-0">
                             <CardBody className="text-center">
-                                <div className="grid grid-cols-5 gap-4">
+                                <div className="grid grid-cols-8 gap-4">
                                     {compositions.length === 0 ? (
                                         <Typography variant="h6" className="col-span-5 text-center text-gray-500">
                                             No compositions available in this playlist.

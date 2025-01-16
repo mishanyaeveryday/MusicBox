@@ -37,13 +37,33 @@ const CreatePlaylist = () => {
                 'Content-Type': 'multipart/form-data',
             },
         })
-            .then(() => {
+            .then((response) => {
+                const playlistId = response.data.id;
+                console.log("Created playlist ID:", playlistId);
+
+                updateUserPlaylists(playlistId);
+
                 navigate("/");
             })
             .catch((error) => {
                 console.error("Error creating playlist:", error.response?.data || error.message);
             });
     };
+
+    const updateUserPlaylists = (playlistId) => {
+        const userId = localStorage.getItem('userId');
+
+        axios.patch(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`, {
+            createdPlaylists: [playlistId],
+        })
+            .then(() => {
+                console.log("User playlists updated successfully.");
+            })
+            .catch((error) => {
+                console.error("Error updating user playlists:", error.response?.data || error.message);
+            });
+    };
+
 
     return (
         <div className="back1 flex justify-center items-center min-h-screen bg-0">

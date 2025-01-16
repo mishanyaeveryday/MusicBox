@@ -177,12 +177,17 @@ const Playlist = ({ id, name }) => {
                     </Link>
                 </Typography>
             </div>
-            <div className="text-center flex flex-row justify-between">
+            <div
+                className="text-center flex flex-row justify-start overflow-x-auto"
+                style={{ maxWidth: "100%", whiteSpace: "nowrap" }}
+            >
                 {compositions.map((composition) => (
-                    <Composition compositionId={composition.id} />
-
+                    <div key={composition.id} className="inline-block mx-2">
+                        <Composition compositionId={composition.id} />
+                    </div>
                 ))}
             </div>
+
         </div>
     );
 };

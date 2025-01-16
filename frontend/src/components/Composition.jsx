@@ -48,35 +48,46 @@ const Composition = ({ compositionId }) => {
 
     return (
         <div>
-            <Card className="w-46 shadowFull m-1 cursor-pointer hover:bg-gray-500/10">
+            <Card className="w-44 h-36 shadowFull m-1 cursor-pointer hover:bg-gray-500/10">
                 <div className="relative">
-                    <CardHeader color="" className="-mt-0 mt-4">
+                    <CardHeader color="" className="-mt-0 mt-2">
                         <img
-                            className="w-full"
-                            src={compositionData.imageUrl || "https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90-..."}
+                            className="w-full h-24 object-cover"
+                            src={
+                                compositionData.imageUrl ||
+                                "https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90fHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60"
+                            }
                             alt="card-image"
                         />
                         <IconButton
                             size="sm"
                             className="!absolute bottom-0 right-0 m-2"
-                            onClick={() => playSong({ title: compositionData.title, src: compositionData.songUrl })}
+                            onClick={() => playSong({ title: compositionData.name, src: compositionData.songUrl })}
                         >
                             <PlayIcon className="h-5 w-5" />
                         </IconButton>
                     </CardHeader>
                 </div>
                 <CardBody className="p-1">
-                    <Typography variant="p" className="text-xs text-left">
-                        {compositionData.name || "Name"}
+                    <Typography
+                        variant="p"
+                        className="text-xs text-left truncate"
+                        style={{ width: "100%", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}
+                    >
+                        {compositionData.name?.substring(0, 10) || "Name"}
                     </Typography>
-                    <Typography variant="p" className="text-xs text-left">
-                        {compositionData.author || "Compositor"}
+                    <Typography
+                        variant="p"
+                        className="text-xs text-left truncate"
+                        style={{ width: "100%", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis" }}
+                    >
+                        {compositionData.author?.substring(0, 10) || "Compositor"}
                     </Typography>
                 </CardBody>
-                <CardFooter className="p-1">
-                </CardFooter>
+                <CardFooter className="p-1"></CardFooter>
             </Card>
         </div>
+
     );
 };
 
