@@ -106,6 +106,21 @@ const Library = () => {
                             ))}
                         </div>
                     )}
+                    <div className="flex flex-col text-left p-6 shadowFull">
+                        <Typography className="mb-2" variant="h5" color="white">
+                            Create your song
+                        </Typography>
+                        <Typography className="mb-2 ml-2" variant="h7">
+                            We will help you
+                        </Typography>
+                        <Button
+                            onClick={() => navigate(isLoggedIn ? "/user/createSong" : "/login")}
+                            className="w-56"
+                            color="white"
+                        >
+                            Create song
+                        </Button>
+                    </div>
                 </CardBody>
                 <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>
             </Card>
@@ -126,7 +141,8 @@ const Playlists = () => {
 
     return (
         <div className="h-full">
-            <Card className="h-full shadowHalf flex flex-col overflow-y-scroll">
+            <Card className="h-full shadowHalf flex flex-col overflow-y-scroll"
+                style={{ scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}>
                 <CardBody className="text-center flex flex-col">
                     {playlists.length > 0 ? (
                         playlists.map((playlist) => (
@@ -179,7 +195,7 @@ const Playlist = ({ id, name }) => {
             </div>
             <div
                 className="text-center flex flex-row justify-start overflow-x-scroll overflow-y-hidden"
-                style={{ maxWidth: "100%", whiteSpace: "nowrap" }}
+                style={{ maxWidth: "100%", whiteSpace: "nowrap",scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}
             >
                 {compositions.map((composition) => (
                     <div key={composition.id} className="inline-block mx-2">

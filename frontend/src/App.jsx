@@ -15,6 +15,8 @@ import AddToPlaylist from './components/AddToPlaylist';
 import PrivateRoute from './components/PrivateRoute';
 import UserPage from './components/UserPage';
 import CreatePlaylist from './components/CreatePlaylist';
+import FindAComposition from './components/FindAComposition';
+import CreateSong from './components/CreateSong';
 import './App.css';
 import './index.css';
 function App() {
@@ -29,12 +31,14 @@ function App() {
           <Route path='/login' element={<Login />} />
           <Route path='/register' element={<Register />} />
           <Route path='/verify' element={<Verify />} />
+          <Route path='/findAComposition/:name' element={<FindAComposition />} />
           <Route path="/user" element={<UserPage />} />
           <Route path="/user/*" element={<PrivateRoute allowedRoles={['user']}>
             <Routes>
               <Route path="*" element={<Error />}></Route>
               <Route index element={<UserPage />} />
               <Route path="/createPlaylist" element={<CreatePlaylist />} />
+              <Route path="/createSong" element={<CreateSong />} />
               <Route path="/addToPlaylist" element={<AddToPlaylist />} />
               <Route path="/notifications" element={<Notifications />} />
             </Routes>

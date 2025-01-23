@@ -3,66 +3,70 @@ import axios from "axios";
 import { Card, CardHeader, CardBody, CardFooter, Typography, Input, Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
-const CreatePlaylist = () => {
-    const [playlistName, setPlaylistName] = useState('');
-    const [playlistImage, setPlaylistImage] = useState(null);
-    const [description, setDescription] = useState('');
+const CreateComposition = () => {
+    const [compositionName, setCompositionName] = useState('');
+    const [compositionImage, setCompositionImage] = useState(null);
+    const [compositionFile, setCompositionFile] = useState(null);
     const navigate = useNavigate();
 
     const handleNameChange = (e) => {
-        setPlaylistName(e.target.value);
+        setCompositionName(e.target.value);
     };
 
-    const handleDescriptionChange = (e) => {
-        setDescription(e.target.value);
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            setCompositionFile(file);
+        }
     };
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            setPlaylistImage(file);
+            setCompositionImage(file);
         }
     };
 
     const handleSave = () => {
         const formData = new FormData();
-        
         formData.append('user_id', localStorage.getItem('userId'));
-        formData.append('name', playlistName);
-        formData.append('description', description);
-        if (playlistImage) {
-            formData.append('image', playlistImage);
+        formData.append('name', compositionName);
+        if (compositionImage) {
+            formData.append('image', compositionImage);
+        }
+        if (compositionFile) {
+            formData.append('audio_file', compositionFile);
         }
 
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}core/playlists/create/`, formData, {
+        axios.post(`${import.meta.env.VITE_BACKEND_URL}core/compositions/create/`, formData, {
             headers: {
                 'Content-Type': 'multipart/form-data',
             },
         })
             .then((response) => {
-                const playlistId = response.data.id;
-                console.log("Created playlist ID:", playlistId);
+                const compositionId = response.data.id;
+                console.log("Created composition ID:", compositionId);
 
-                updateUserPlaylists(playlistId);
+                updateUserCompositions(compositionId);
 
                 navigate("/");
             })
             .catch((error) => {
-                console.error("Error creating playlist:", error.response?.data || error.message);
+                console.error("Error creating composition:", error.response?.data || error.message);
             });
     };
 
-    const updateUserPlaylists = (playlistId) => {
+    const updateUserCompositions = (compositionId) => {
         const userId = localStorage.getItem('userId');
 
         axios.patch(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`, {
-            createdPlaylists: [playlistId],
+            createdCompositions: [compositionId],
         })
             .then(() => {
-                console.log("User playlists updated successfully.");
+                console.log("User compositions updated successfully.");
             })
             .catch((error) => {
-                console.error("Error updating user playlists:", error.response?.data || error.message);
+                console.error("Error updating user compositions:", error.response?.data || error.message);
             });
     };
 
@@ -71,39 +75,39 @@ const CreatePlaylist = () => {
         <div className="back1 flex justify-center items-center min-h-screen bg-0">
             <Card className="w-full max-w-4xl shadowHalf">
                 <CardHeader floated={false} className="text-center shadowFull py-4">
-                    <Typography variant="h4">Create a Playlist</Typography>
+                    <Typography variant="h4">Create a Composition</Typography>
                 </CardHeader>
                 <CardBody className="space-y-6">
                     <div>
                         <Input
-                            label="Playlist Name"
-                            value={playlistName}
+                            label="Composition Name"
+                            value={compositionName}
                             color="white"
                             onChange={handleNameChange}
                             className="w-full"
                         />
                     </div>
                     <div>
-                        <Input
-                            label="Playlist Description"
-                            value={description}
-                            color="white"
-                            onChange={handleDescriptionChange}
-                            className="w-full"
+                        <label className="block text-white">Composition Audio</label>
+                        <input
+                            type="file"
+                            accept="audio/*"
+                            onChange={handleFileChange}
+                            className="block w-full mt-2"
                         />
                     </div>
                     <div>
-                        <label className="block text-white">Playlist Image</label>
+                        <label className="block text-white">Composition Image</label>
                         <input
                             type="file"
                             accept="image/*"
                             onChange={handleImageChange}
                             className="block w-full mt-2"
                         />
-                        {playlistImage && (
+                        {compositionImage && (
                             <img
-                                src={URL.createObjectURL(playlistImage)}
-                                alt="Playlist"
+                                src={URL.createObjectURL(compositionImage)}
+                                alt="Composition"
                                 className="mt-4 w-32 h-32 object-cover mx-auto rounded-md shadow-md"
                             />
                         )}
@@ -111,7 +115,7 @@ const CreatePlaylist = () => {
                 </CardBody>
                 <CardFooter className="flex justify-center py-4">
                     <Button onClick={handleSave} className="px-6">
-                        Save Playlist
+                        Save Composition
                     </Button>
                 </CardFooter>
             </Card>
@@ -119,4 +123,4 @@ const CreatePlaylist = () => {
     );
 };
 
-export default CreatePlaylist;
+export default CreateComposition;

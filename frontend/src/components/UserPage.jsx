@@ -17,8 +17,7 @@ const api = axios.create({
 });
 
 const UserPage = () => {
-    const [userData, setUserData] = useState({ username: "", email: "", password: "" });
-    const [avatar, setAvatar] = useState("");
+    const [userData, setUserData] = useState({ username: "", email: "",avatar:""});
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -34,10 +33,8 @@ const UserPage = () => {
             setUserData({
                 username: data.username || "",
                 email: data.email || "",
-                password: "",
+                avatar:data.avatar || "/images/default_avatar.png",
             });
-
-            setAvatar(data.iconUrl || "");
         } catch (error) {
             console.error("Error fetching user data:", error);
         } finally {
@@ -53,13 +50,19 @@ const UserPage = () => {
                 return;
             }
 
-            await api.put(`core/users/${userId}/`, { [field]: value });
+            const formData = new FormData();
+            formData.append(field, value);
+
+            await api.patch(`core/users/${userId}/`, formData, {
+                headers: { "Content-Type": "multipart/form-data" },
+            });
+
             alert(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully.`);
         } catch (error) {
             console.error(`Error updating ${field}:`, error);
+            alert(`Failed to update ${field}.`);
         }
     };
-
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -70,19 +73,20 @@ const UserPage = () => {
                 const formData = new FormData();
                 formData.append("avatar", file);
 
-                await api.post(`core/users/${userId}/upload-avatar`, formData, {
+                await api.patch(`core/users/${userId}/`, formData, {
                     headers: { "Content-Type": "multipart/form-data" },
                 });
 
-                const { data: userIcon } = await api.get(`core/users/${userId}/`);
-                setAvatar(userIcon.iconUrl || "");
+                const { data: user } = await api.get(`core/users/${userId}/`);
+                setUserData((prev) => ({ ...prev, avatar: user.avatar || "/images/default_avatar.png" }));
                 alert("Avatar updated successfully!");
             } catch (error) {
-                console.error("Error uploading file:", error);
+                console.error("Error uploading avatar:", error);
                 alert("Failed to upload avatar.");
             }
         }
     };
+    
 
     const handleEdit = (field, value) => {
         setUserData((prev) => ({ ...prev, [field]: value }));
@@ -101,8 +105,8 @@ const UserPage = () => {
         <div className="flex flex-col items-center justify-start p-6 h-full">
             <div className="relative w-32 h-32">
                 <div className="rounded-full bg-gray-300 flex items-center justify-center w-full h-full">
-                    {avatar ? (
-                        <img src={avatar} alt="User Avatar" className="h-16 w-16 rounded-full" />
+                    {userData.avatar ? (
+                        <img src={userData.avatar} alt="User Avatar" className="h-16 w-16 rounded-full" />
                     ) : (
                         <UserIcon className="h-16 w-16 text-gray-700" />
                     )}
@@ -113,7 +117,8 @@ const UserPage = () => {
                             type="file"
                             accept="image/*"
                             onChange={handleFileUpload}
-                            className="hidden"
+                            className="!absolute p-1"
+                            style={{ zIndex: "100", opacity: "0", width: "30px" }}
                         />
                         <IconButton size="sm">
                             <PencilIcon className="h-5 w-5" />
@@ -137,13 +142,6 @@ const UserPage = () => {
                         value={userData.email}
                         onChange={(e) => handleEdit("email", e.target.value)}
                         placeholder="Email"
-                        className="mb-2 w-full"
-                    />
-                    <Input
-                        type="password"
-                        value={userData.password}
-                        onChange={(e) => handleEdit("password", e.target.value)}
-                        placeholder="Password"
                         className="mb-2 w-full"
                     />
                 </CardBody>

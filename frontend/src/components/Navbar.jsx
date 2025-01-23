@@ -19,7 +19,7 @@ import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } fr
 export function NavbarDark() {
   const [language, setLanguage] = useState("ENG");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [userName, setUserName] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [userPhoto, setUserPhoto] = useState("");
   const token = localStorage.getItem('token');
   const userId = localStorage.getItem('userId');
@@ -74,6 +74,12 @@ export function NavbarDark() {
     setUserPhoto("");
   };
 
+  const handleSearch = () => {
+    if (searchQuery.trim() !== "") {
+      navigate(`/findAComposition/${searchQuery}`);
+    }
+  };
+
   const handleLanguageChange = (lang) => {
     setLanguage(lang);
   };
@@ -97,7 +103,7 @@ export function NavbarDark() {
             </IconButton>
           </div>
           <div className="relative flex w-full gap-2 md:w-max">
-            <Input
+          <Input
               type="search"
               color="white"
               label="What you want to listen?"
@@ -105,8 +111,15 @@ export function NavbarDark() {
               containerProps={{
                 className: "min-w-[288px]",
               }}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
             />
-            <IconButton variant="text" color="white" className="!absolute right-1 rounded">
+            <IconButton
+              variant="text"
+              color="white"
+              className="!absolute right-1 rounded"
+              onClick={handleSearch}
+            >
               <MagnifyingGlassIcon className="h-4 w-4" />
             </IconButton>
           </div>
