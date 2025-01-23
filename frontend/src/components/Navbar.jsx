@@ -27,7 +27,7 @@ export function NavbarDark() {
 
   useEffect(() => {
     const checkToken = async () => {
-      if (!token) {
+      if (!token) { console.log("token");
         setIsLoggedIn(false);
         return;
       }
@@ -35,6 +35,7 @@ export function NavbarDark() {
       try {
         const isTokenValid = await validateToken(token);
         if (!isTokenValid) {
+          console.log("valid");
           handleLogout();
           return;
         }
@@ -42,7 +43,6 @@ export function NavbarDark() {
         const userResponse = await fetchUserData(userId, token);
         if (userResponse && userResponse.data) {
           setIsLoggedIn(true);
-          setUserName(userResponse.data.name);
           setUserPhoto(userResponse.data.avatar || "/images/default_avatar.png");
         }
       } catch (error) {
