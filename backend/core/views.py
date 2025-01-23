@@ -7,8 +7,8 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from .utils import send_otp, send_info_about_created_account
-from .models import User, Playlist, Composition, History, Notification
-from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, HistorySerializer, NotificationSerializer
+from .models import User, Playlist, Composition, Notification
+from .serializer import UserSerializer, PlaylistSerializer, CompositionSerializer, NotificationSerializer
 from rest_framework_simplejwt.tokens import RefreshToken, AccessToken
 from django.utils import timezone
 from rest_framework.views import APIView
@@ -228,6 +228,32 @@ def get_compositions_from_playlist(request, pk):
 
 
 @api_view(['GET'])
+def get_compositions_from_user(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    compositions = user.compositions.all()
+    if not compositions.exists():
+        return Response({"detail": "No compositions found in this User."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = CompositionSerializer(compositions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
+def get_playlists_from_user(request, pk):
+    try:
+        user = User.objects.get(pk=pk)
+    except User.DoesNotExist:
+        return Response({"detail": "User not found."}, status=status.HTTP_404_NOT_FOUND)
+    compositions = user.playlists.all()
+    if not compositions.exists():
+        return Response({"detail": "No playlists found in this User."}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PlaylistSerializer(compositions, many=True)
+    return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+@api_view(['GET'])
 def get_compositions(request):
     compositions = Composition.objects.all()
     serializer = CompositionSerializer(compositions, many=True)
@@ -277,44 +303,6 @@ def get_compositions_by_category(request, category):
 
     except Exception as e:
         return Response({"detail": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-
-@ api_view(['GET'])
-def get_history(request):
-    histories = History.objects.all()
-    serializer = HistorySerializer(histories, many=True)
-    return Response(serializer.data)
-
-
-@ api_view(['POST'])
-def create_history(request):
-    serializer = HistorySerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(serializer.data, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@ api_view(['GET', 'PUT', 'DELETE'])
-def history_detail(request, pk):
-    try:
-        history = History.objects.get(pk=pk)
-    except History.DoesNotExist:
-        return Response(status=status.HTTP_404_NOT_FOUND)
-
-    if request.method == 'GET':
-        serializer = HistorySerializer(history)
-        return Response(serializer.data)
-    elif request.method == 'PUT':
-        serializer = HistorySerializer(history, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
-    elif request.method == 'DELETE':
-        history.delete()
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 @api_view(['GET'])

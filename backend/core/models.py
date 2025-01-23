@@ -47,6 +47,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     otp_expiry = models.DateTimeField(blank=True, null=True)
     max_otp_try = models.CharField(max_length=2, default=3)
     otp_max_out = models.DateTimeField(blank=True, null=True)
+    playlists = models.ManyToManyField('Playlist', blank=True)
+    compositions = models.ManyToManyField('Composition', blank=True)
 
     date_joined = models.DateTimeField(default=timezone.now)
 
@@ -66,6 +68,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Playlist(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=30, default='')
     compositions = models.ManyToManyField('Composition', blank=True)
     image = models.ImageField(
@@ -90,7 +93,6 @@ class Composition(models.Model):
         default='',
         validators=[validate_single_word]
     )
-    time = models.DurationField()
     text = models.TextField()
     image = models.ImageField(
         upload_to='images/cover/', blank=True, max_length=100)
@@ -101,17 +103,6 @@ class Composition(models.Model):
 
     def __str__(self):
         return self.name
-
-
-class History(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    time_of_listening = models.DateTimeField(auto_now_add=True)
-    compositions = models.ManyToManyField('Composition', blank=True)
-
-    def __str__(self):
-        compositions_names = ", ".join(
-            [composition.name for composition in self.compositions.all()])
-        return f"Listening to: {compositions_names} at {self.time_of_listening}" if compositions_names else f"Listening at {self.time_of_listening}"
 
 
 class Notification(models.Model):
