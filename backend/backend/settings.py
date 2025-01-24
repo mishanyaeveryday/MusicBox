@@ -29,7 +29,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+SITE_ID = 1
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_simplejwt',
@@ -47,11 +52,16 @@ INSTALLED_APPS = [
     'django_seed',
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 AUTH_USER_MODEL = 'core.User'
 
 
 MIDDLEWARE = [
+    'allauth.account.middleware.AccountMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -99,7 +109,7 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
 EMAIL_PORT = 587
 EMAIL_HOST_USER = 'peachnote76@gmail.com'
-EMAIL_HOST_PASSWORD = 'woia emzq psrw innb'  # peachnote1234
+EMAIL_HOST_PASSWORD = 'woia emzq psrw innb'
 
 
 # Database
@@ -158,6 +168,12 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 STATICFILES_DIRS = (
     os.path.join(BASE_DIR, 'static'),
 )
+
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/'
+SOCIALACCOUNT_LOGIN_ON_GET = True
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
