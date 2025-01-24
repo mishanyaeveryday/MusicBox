@@ -91,10 +91,10 @@ const SearchMusic = () => {
                                 className="flex-1 overflow-y-auto p-2 rounded-md"
                                 style={{ scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}
                             >
-                                {playlists.length > 0 ? (
+                                {filteredPlaylists.length > 0 ? (
                                     <div className="flex flex-col gap-4"
                                     style={{ scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}>
-                                        {playlists.map((playlist) => (
+                                        {filteredPlaylists.map((playlist) => (
                                             <div
                                             key={playlist.id}
                                             className="p-4 rounded-md shadowFull flex flex-col justify-between"
@@ -136,9 +136,9 @@ const SearchMusic = () => {
                                 className="flex-1 overflow-y-auto p-2 rounded-md"
                                 style={{ scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}
                             >
-                                {compositions.length > 0 ? (
+                                {filteredCompositions.length > 0 ? (
                                     <div className="grid grid-cols-4 gap-6">
-                                        {compositions.map((composition) => (
+                                        {filteredCompositions.map((composition) => (
                                             <Composition compositionId={composition.id} />
                                         ))}
                                     </div>

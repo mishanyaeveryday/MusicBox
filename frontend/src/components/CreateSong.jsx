@@ -27,9 +27,16 @@ const CreateComposition = () => {
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const formData = new FormData();
-        formData.append('user_id', localStorage.getItem('userId'));
+
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+            console.error("User ID not found in localStorage");
+            return;
+        }
+
+        formData.append('user_id', userId);
         formData.append('name', compositionName);
         if (compositionImage) {
             formData.append('image', compositionImage);
@@ -38,38 +45,41 @@ const CreateComposition = () => {
             formData.append('audio_file', compositionFile);
         }
 
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}core/compositions/create/`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-            .then((response) => {
-                const compositionId = response.data.id;
-                console.log("Created composition ID:", compositionId);
+        try {
+            const createResponse = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}core/compositions/create/`,
+                formData,
+                {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                }
+            );
 
-                updateUserCompositions(compositionId);
+            const compositionId = createResponse.data.id;
+            console.log("Created composition ID:", compositionId);
 
-                navigate("/");
-            })
-            .catch((error) => {
-                console.error("Error creating composition:", error.response?.data || error.message);
-            });
+            await axios.patch(
+                `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`,
+                {
+                    сompositions: [compositionId], 
+                },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                }
+            );
+
+            console.log("User compositions updated successfully.");
+            navigate("/");
+        } catch (error) {
+            console.error(
+                "Error during composition creation or user update:",
+                error.response?.data || error.message
+            );
+        }
     };
-
-    const updateUserCompositions = (compositionId) => {
-        const userId = localStorage.getItem('userId');
-
-        axios.patch(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`, {
-            createdCompositions: [compositionId],
-        })
-            .then(() => {
-                console.log("User compositions updated successfully.");
-            })
-            .catch((error) => {
-                console.error("Error updating user compositions:", error.response?.data || error.message);
-            });
-    };
-
 
     return (
         <div className="back1 flex justify-center items-center min-h-screen bg-0">

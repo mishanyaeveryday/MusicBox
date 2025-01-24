@@ -4,9 +4,9 @@ import { Card, CardHeader, CardBody, CardFooter, Typography, Input, Button } fro
 import { useNavigate } from "react-router-dom";
 
 const CreatePlaylist = () => {
-    const [playlistName, setPlaylistName] = useState('');
+    const [playlistName, setPlaylistName] = useState("");
     const [playlistImage, setPlaylistImage] = useState(null);
-    const [description, setDescription] = useState('');
+    const [description, setDescription] = useState("");
     const navigate = useNavigate();
 
     const handleNameChange = (e) => {
@@ -24,48 +24,60 @@ const CreatePlaylist = () => {
         }
     };
 
-    const handleSave = () => {
+    const handleSave = async () => {
         const formData = new FormData();
-        
-        formData.append('user_id', localStorage.getItem('userId'));
-        formData.append('name', playlistName);
-        formData.append('description', description);
-        if (playlistImage) {
-            formData.append('image', playlistImage);
+    
+        const userId = localStorage.getItem("userId");
+        if (!userId) {
+            console.error("User ID not found in localStorage");
+            return;
         }
-
-        axios.post(`${import.meta.env.VITE_BACKEND_URL}core/playlists/create/`, formData, {
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-        })
-            .then((response) => {
-                const playlistId = response.data.id;
-                console.log("Created playlist ID:", playlistId);
-
-                updateUserPlaylists(playlistId);
-
-                navigate("/");
-            })
-            .catch((error) => {
-                console.error("Error creating playlist:", error.response?.data || error.message);
-            });
+    
+        formData.append("user_id", userId);
+        formData.append("name", playlistName);
+        formData.append("description", description);
+        if (playlistImage) {
+            formData.append("image", playlistImage);
+        }
+    
+        try {
+            const createResponse = await axios.post(
+                `${import.meta.env.VITE_BACKEND_URL}core/playlists/create/`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+    
+            const playlistId = createResponse.data.id;
+            console.log("Created playlist ID:", playlistId);
+    
+            await axios.patch(
+                `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`,
+                {
+                    playlists: [playlistId], 
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+    
+            console.log("User playlists updated successfully.");
+            navigate("/");
+        } catch (error) {
+            console.error(
+                "Error during playlist creation or user update:",
+                error.response?.data || error.message
+            );
+        }
     };
-
-    const updateUserPlaylists = (playlistId) => {
-        const userId = localStorage.getItem('userId');
-
-        axios.patch(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`, {
-            createdPlaylists: [playlistId],
-        })
-            .then(() => {
-                console.log("User playlists updated successfully.");
-            })
-            .catch((error) => {
-                console.error("Error updating user playlists:", error.response?.data || error.message);
-            });
-    };
-
+    
+    
+    
 
     return (
         <div className="back1 flex justify-center items-center min-h-screen bg-0">

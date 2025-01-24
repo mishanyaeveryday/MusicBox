@@ -106,7 +106,7 @@ const UserPage = () => {
             <div className="relative w-32 h-32">
                 <div className="rounded-full bg-gray-300 flex items-center justify-center w-full h-full">
                     {userData.avatar ? (
-                        <img src={userData.avatar} alt="User Avatar" className="h-16 w-16 rounded-full" />
+                        <img src={`http://127.0.0.1:8000/${userData.avatar}`} alt="User Avatar" className="h-16 w-16 rounded-full" />
                     ) : (
                         <UserIcon className="h-16 w-16 text-gray-700" />
                     )}

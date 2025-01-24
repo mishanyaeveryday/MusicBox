@@ -142,7 +142,7 @@ export function NavbarDark() {
           <div className="flex gap-1 md:mx-1">
             {isLoggedIn ? (
               <img
-                src={userPhoto || "/images/default_avatar.png"}
+                src={`http://127.0.0.1:8000/${userPhoto}` || "/images/default_avatar.png"}
                 alt="User"
                 className="h-8 w-8 rounded-full cursor-pointer"
                 onClick={() => navigate("/user")}

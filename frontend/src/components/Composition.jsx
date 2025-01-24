@@ -29,10 +29,10 @@ const Composition = ({ compositionId }) => {
     useEffect(() => {
         const fetchCompositionData = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/compositions/${compositionId}`);
+                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/compositions/${compositionId}/`);
                 const data = response.data;
 
-                const response2 = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${data.user_id}`);
+                const response2 = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${data.user_id}/`);
                 const data2 = response2.data;
 
                 setCompositionData({
@@ -63,7 +63,7 @@ const Composition = ({ compositionId }) => {
                         <img
                             className="w-full h-24 object-cover"
                             src={
-                                compositionData.imageUrl ||
+                                `http://127.0.0.1:8000/images/compositions${compositionData.imageUrl}` ||
                                 "https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90fHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60"
                             }
                             alt="card-image"

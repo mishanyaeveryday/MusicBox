@@ -40,31 +40,31 @@ const LoginForm = () => {
         <Typography variant="h2" style={{ fontFamily: 'Philosopher' }} className="text-indigo-900 pt-10 font-thin">
           LOGIN
         </Typography>
-        <center>
-          <form className="px-24 mt-8 mb-2 max-w-screen-lg" onSubmit={handleLogin}>
-            <div className="mb-1 flex flex-col gap-6">
+          <center>
+            <form className="px-24 mt-8 mb-2 max-w-screen-lg" onSubmit={handleLogin}>
               <div className="mb-1 flex flex-col gap-6">
-                <Input type="text" size="lg"
-                  placeholder="Login"
-                  className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="login" value={login} onChange={(e) => setLogin(e.target.value)} />
-                <Input type="password" size="lg"
-                  placeholder="***********"
-                  className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                <div className="mb-1 flex flex-col gap-6">
+                  <Input type="text" size="lg"
+                    placeholder="Login"
+                    className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="login" value={login} onChange={(e) => setLogin(e.target.value)} />
+                  <Input type="password" size="lg"
+                    placeholder="***********"
+                    className="placeholder:opacity-100 !border-t-blue-gray-200 focus:!border-t-gray-900 bg-white" name="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+                </div>
               </div>
-            </div>
-            <Button color="indigo" className="mt-12 text-white text-2xl rounded-2xl font-thin" fullWidth style={{ fontFamily: 'Philosopher' }} type="submit" variant="solid">
-              Continue
-            </Button>
-          </form>
-          {message && <p style={{ color: message.includes("accepted") ? "green" : "red" }}>{message}</p>}
-        </center>
-        <div className="flex flex-col items-center mb-20">
-          <Link to="/register" className='p-2 underline text-white' style={{ fontFamily: 'Arsenal' }}>
-            <Button color="indigo" className="mx-5" variant="text">
-              Register
-            </Button>
-          </Link>
-        </div>
+              <Button color="indigo" className="mt-12 text-white text-2xl rounded-2xl font-thin" fullWidth style={{ fontFamily: 'Philosopher' }} type="submit" variant="solid">
+                Continue
+              </Button>
+            </form>
+            {message && <p style={{ color: message.includes("accepted") ? "green" : "red" }}>{message}</p>}
+          </center>
+          <div className="flex flex-col items-center mb-20">
+            <Link to="/register" className='p-2 underline text-white' style={{ fontFamily: 'Arsenal' }}>
+              <Button color="indigo" className="mx-5" variant="text">
+                Register
+              </Button>
+            </Link>
+          </div>
       </Card>
     </div>
   );

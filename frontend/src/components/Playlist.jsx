@@ -4,16 +4,18 @@ import { Card, IconButton, CardBody, CardFooter, Typography } from "@material-ta
 import axios from "axios";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import Composition from './Composition';
+import { usePlayer } from './PlayerContext';
 
 const Playlist = () => {
     const { playlistId } = useParams();
     const [compositions, setCompositions] = useState([]);
+    const { playSong } = usePlayer();
     const [playlistIcon, setPlaylistIcon] = useState("");
     const [playlistName, setPlaylistName] = useState("");
     const [playlistDescription, setPlaylistDescription] = useState("");
 
     useEffect(() => {
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}/`)
             .then((response) => {
                 setPlaylistIcon(response.data.image);
                 setPlaylistName(response.data.name);
@@ -23,7 +25,7 @@ const Playlist = () => {
                 console.error("Error fetching playlist data:", error);
             });
 
-        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}/compositions`)
+        axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}/compositions/`)
             .then((response) => {
                 setCompositions(response.data || []);
             })
@@ -31,6 +33,18 @@ const Playlist = () => {
                 console.error("Error fetching compositions data:", error);
             });
     }, [playlistId]);
+
+    const handlePlayPlaylist = () => {
+        if (compositions.length > 0) {
+            const firstComposition = compositions[0];
+            playSong({
+                title: firstComposition.name,
+                src: firstComposition.audio_file,
+            });
+        } else {
+            alert("Playlist is empty!");
+        }
+    };
 
     return (
         <div>
@@ -40,7 +54,7 @@ const Playlist = () => {
                         <div className="w-24 h-24 mr-6">
                             {playlistIcon ? (
                                 <img
-                                    src={playlistIcon}
+                                    src={`http://127.0.0.1:8000/images/playlists${playlistIcon}`}
                                     alt="Playlist Icon"
                                     className="rounded-full object-cover w-full h-full"
                                 />
@@ -61,6 +75,7 @@ const Playlist = () => {
                         <IconButton
                             size="sm"
                             className="h-16 w-16 max-w-full max-h-full rounded-full"
+                            onClick={handlePlayPlaylist}
                         >
                             <PlayIcon className="pl-1 h-16 w-16"></PlayIcon>
                         </IconButton>
