@@ -16,6 +16,7 @@ import PrivateRoute from './components/PrivateRoute';
 import UserPage from './components/UserPage';
 import CreatePlaylist from './components/CreatePlaylist';
 import FindAComposition from './components/FindAComposition';
+import EditComposition from './components/EditComposition';
 import CreateSong from './components/CreateSong';
 import './App.css';
 import './index.css';
@@ -40,6 +41,7 @@ function App() {
               <Route path="/createPlaylist" element={<CreatePlaylist />} />
               <Route path="/createSong" element={<CreateSong />} />
               <Route path="/addToPlaylist" element={<AddToPlaylist />} />
+              <Route path='/editComposition/:id' element={<EditComposition />} />
               <Route path="/notifications" element={<Notifications />} />
             </Routes>
           </PrivateRoute>} />

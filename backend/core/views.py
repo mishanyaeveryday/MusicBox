@@ -200,7 +200,7 @@ def create_playlist(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@ api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE', 'PATCH'])
 def playlist_detail(request, pk):
     try:
         playlist = Playlist.objects.get(pk=pk)
@@ -216,6 +216,13 @@ def playlist_detail(request, pk):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
+    elif request.method == 'PATCH':
+        serializer = PlaylistSerializer(playlist, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         playlist.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
@@ -277,7 +284,7 @@ def create_composition(request):
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-@ api_view(['GET', 'PUT', 'DELETE'])
+@ api_view(['GET', 'PUT', 'DELETE', 'PATCH'])
 def composition_detail(request, pk):
     try:
         composition = Composition.objects.get(pk=pk)
@@ -293,6 +300,13 @@ def composition_detail(request, pk):
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
+    elif request.method == 'PATCH':
+        serializer = CompositionSerializer(composition, data=request.data, partial=True)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         composition.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

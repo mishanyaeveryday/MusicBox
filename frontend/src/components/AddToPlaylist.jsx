@@ -6,37 +6,79 @@ import { PlusIcon } from "@heroicons/react/24/solid";
 const AddToPlaylist = () => {
     const [playlists, setPlaylists] = useState([]);
     const [selectedCompositionId, setSelectedCompositionId] = useState(null);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const compositionId = localStorage.getItem("selectedCompositionId");
         if (compositionId) {
             setSelectedCompositionId(compositionId);
+        } else {
+            alert("No composition selected. Please select a composition to add.");
         }
     }, []);
 
     useEffect(() => {
-        const fetchPlaylists = async () => {
+        const fetchUserPlaylists = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/`);
-                setPlaylists(response.data || []);
+                const userId = localStorage.getItem("userId");
+                if (!userId) {
+                    console.error("User not logged in");
+                    return;
+                }
+
+                const { data: userData } = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`
+                );
+
+                const playlistIds = userData.playlists || [];
+
+                const playlistsPromises = playlistIds.map((id) =>
+                    axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${id}/`)
+                );
+                const playlistsData = await Promise.all(playlistsPromises);
+
+                setPlaylists(playlistsData.map((response) => response.data));
             } catch (error) {
                 console.error("Error fetching playlists:", error);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchPlaylists();
+        fetchUserPlaylists();
     }, []);
 
     const handleAddToPlaylist = async (playlistId) => {
         if (!selectedCompositionId) {
             console.error("No composition selected");
+            alert("Please select a composition to add.");
             return;
         }
 
         try {
-            await axios.post(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}/add-composition/`, {
-                composition_id: selectedCompositionId,
-            });
+            // Get the playlist to check for the existing composition
+            const { data: playlist } = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}/`
+            );
+
+            if (playlist.compositions.includes(selectedCompositionId)) {
+                alert("Composition is already in this playlist.");
+                return;
+            }
+
+            // Use PATCH to update the playlist with the new composition ID
+            await axios.patch(
+                `${import.meta.env.VITE_BACKEND_URL}core/playlists/${playlistId}/`,
+                {
+                    compositions: [...playlist.compositions, selectedCompositionId], // Append the composition ID
+                },
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            );
+
             alert("Composition added to playlist successfully!");
         } catch (error) {
             console.error("Error adding composition to playlist:", error);
@@ -50,7 +92,11 @@ const AddToPlaylist = () => {
                 Add Composition to Playlist
             </Typography>
 
-            {playlists.length === 0 ? (
+            {loading ? (
+                <Typography variant="h6" className="text-gray-500">
+                    Loading playlists...
+                </Typography>
+            ) : playlists.length === 0 ? (
                 <Typography variant="h6" className="text-gray-500">
                     No playlists available.
                 </Typography>

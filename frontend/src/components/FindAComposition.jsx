@@ -139,7 +139,7 @@ const SearchMusic = () => {
                                 {filteredCompositions.length > 0 ? (
                                     <div className="grid grid-cols-4 gap-6">
                                         {filteredCompositions.map((composition) => (
-                                            <Composition compositionId={composition.id} />
+                                            <Composition compositionId={composition.id} playlistId={"none"} />
                                         ))}
                                     </div>
                                 ) : (

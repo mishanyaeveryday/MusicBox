@@ -14,8 +14,9 @@ import {
 } from "@material-tailwind/react";
 import { PlayIcon } from "@heroicons/react/24/outline";
 import { PlusIcon } from '@heroicons/react/24/solid';
+import { PencilIcon } from '@heroicons/react/24/solid';
 
-const Composition = ({ compositionId }) => {
+const Composition = ({ compositionId,playlistId }) => {
     const { playSong } = usePlayer();
     const navigate = useNavigate();
 
@@ -24,6 +25,7 @@ const Composition = ({ compositionId }) => {
         author: '',
         imageUrl: '',
         songUrl: '',
+        userId: '',
     });
 
     useEffect(() => {
@@ -40,6 +42,7 @@ const Composition = ({ compositionId }) => {
                     author: data2.username,
                     imageUrl: data.image,
                     songUrl: data.audio_file,
+                    userId: data.user_id, 
                 });
             } catch (error) {
                 console.error("Error fetching composition data:", error);
@@ -51,9 +54,16 @@ const Composition = ({ compositionId }) => {
 
     const handleAddToPlaylist = () => {
         localStorage.setItem('selectedCompositionId', compositionId);
-
         navigate('/user/addToPlaylist');
     };
+
+    const handleEditComposition = () => {
+        localStorage.setItem('selectedCompositionId', compositionId);
+        localStorage.setItem("playlistId",playlistId);
+        navigate(`/user/editComposition/${compositionId}`);
+    };
+
+    const loggedInUserId = localStorage.getItem("userId");
 
     return (
         <div>
@@ -62,10 +72,7 @@ const Composition = ({ compositionId }) => {
                     <CardHeader color="" className="-mt-0 mt-2">
                         <img
                             className="w-full h-24 object-cover"
-                            src={
-                                `http://127.0.0.1:8000/images/compositions${compositionData.imageUrl}` ||
-                                "https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90fHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60"
-                            }
+                            src={compositionData.imageUrl ? `http://127.0.0.1:8000${compositionData.imageUrl}` : "https://images.unsplash.com/photo-1540553016722-983e48a2cd10?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90fHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&q=60"}
                             alt="card-image"
                         />
                         <IconButton
@@ -82,6 +89,15 @@ const Composition = ({ compositionId }) => {
                         >
                             <PlayIcon className="h-5 w-5" />
                         </IconButton>
+                        {compositionData.userId === loggedInUserId && (
+                            <IconButton
+                                size="sm"
+                                className="!absolute bottom-0 left-0 m-2"
+                                onClick={handleEditComposition}
+                            >
+                                <PencilIcon className="h-5 w-5" />
+                            </IconButton>
+                        )}
                     </CardHeader>
                 </div>
                 <CardBody className="p-1">
@@ -103,7 +119,6 @@ const Composition = ({ compositionId }) => {
                 <CardFooter className="p-1"></CardFooter>
             </Card>
         </div>
-
     );
 };
 

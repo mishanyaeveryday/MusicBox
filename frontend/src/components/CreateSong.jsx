@@ -29,48 +29,56 @@ const CreateComposition = () => {
 
     const handleSave = async () => {
         const formData = new FormData();
-
+    
         const userId = localStorage.getItem("userId");
         if (!userId) {
             console.error("User ID not found in localStorage");
             return;
         }
-
-        formData.append('user_id', userId);
-        formData.append('name', compositionName);
+    
+        formData.append("user_id", userId);
+        formData.append("text", "None");
+        formData.append("name", compositionName);
         if (compositionImage) {
-            formData.append('image', compositionImage);
+            formData.append("image", compositionImage);
         }
         if (compositionFile) {
-            formData.append('audio_file', compositionFile);
+            formData.append("audio_file", compositionFile);
         }
-
+    
         try {
             const createResponse = await axios.post(
                 `${import.meta.env.VITE_BACKEND_URL}core/compositions/create/`,
                 formData,
                 {
                     headers: {
-                        'Content-Type': 'multipart/form-data',
+                        "Content-Type": "multipart/form-data",
                     },
                 }
             );
-
+    
             const compositionId = createResponse.data.id;
             console.log("Created composition ID:", compositionId);
-
+    
+            const userResponse = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`
+            );
+    
+            const currentCompositions = userResponse.data.compositions || [];
+            const updatedCompositions = [...currentCompositions, compositionId];
+    
             await axios.patch(
                 `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`,
                 {
-                    сompositions: [compositionId], 
+                    compositions: updatedCompositions,
                 },
                 {
                     headers: {
-                        'Content-Type': 'application/json',
+                        "Content-Type": "application/json",
                     },
                 }
             );
-
+    
             console.log("User compositions updated successfully.");
             navigate("/");
         } catch (error) {
@@ -80,6 +88,7 @@ const CreateComposition = () => {
             );
         }
     };
+    
 
     return (
         <div className="back1 flex justify-center items-center min-h-screen bg-0">

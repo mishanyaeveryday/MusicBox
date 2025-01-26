@@ -26,7 +26,7 @@ const PlayerWrapper = () => {
         </div>
         <AudioPlayer
           id="audio-player"
-          src={currentSong.src || ""}
+          src={`http://127.0.0.1:8000${currentSong.src}` || ""}
           onTimeUpdate={handleTimeUpdate}
           onLoadedMetadata={handleLoadedMetadata}
           style={{ backgroundColor: "black !important", boxShadow: 0 }}

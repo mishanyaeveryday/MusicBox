@@ -54,10 +54,17 @@ const CreatePlaylist = () => {
             const playlistId = createResponse.data.id;
             console.log("Created playlist ID:", playlistId);
     
+            const userResponse = await axios.get(
+                `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`
+            );
+    
+            const currentPlaylists = userResponse.data.playlists || [];
+            const updatedPlaylists = [...currentPlaylists, playlistId];
+    
             await axios.patch(
                 `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`,
                 {
-                    playlists: [playlistId], 
+                    playlists: updatedPlaylists,
                 },
                 {
                     headers: {
@@ -75,6 +82,7 @@ const CreatePlaylist = () => {
             );
         }
     };
+    
     
     
     

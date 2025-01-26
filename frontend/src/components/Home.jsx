@@ -16,40 +16,48 @@ import axios from "axios";
 import { PlayIcon, PlusIcon, QueueListIcon } from "@heroicons/react/24/outline";
 
 const Library = () => {
-    const [isEmptyPlaylists, setIsEmptyPlaylists] = useState(true);
     const [isLoggedIn, setIsLogin] = useState(true);
     const [playlists, setPlaylists] = useState([]);
+    const [compositions, setCompositions] = useState([]);
     const [loading, setLoading] = useState(true);
     const navigate = useNavigate();
 
     useEffect(() => {
-        const userId = localStorage.getItem("userId");
-
-        if (!userId) {
-            console.error("Пользователь не авторизован");
-            setLoading(false);
-            setIsLogin(false);
-            return;
-        }
-
-        axios
-            .get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/library`)
-            .then((response) => {
-                const { playlists } = response.data || {};
-
-                if (playlists?.length > 0) {
-                    setIsEmptyPlaylists(false);
-                    setPlaylists(playlists);
-                } else {
-                    setIsEmptyPlaylists(true);
+        const fetchUserData = async () => {
+            try {
+                const userId = localStorage.getItem("userId");
+                if (!userId) {
+                    console.error("User not logged in");
+                    return;
                 }
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-            })
-            .finally(() => {
+
+                const { data: userData } = await axios.get(
+                    `${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`
+                );
+
+                const playlistIds = userData.playlists || [];
+                const compositionIds = userData.compositions || [];
+
+                const playlistsPromises = playlistIds.map((id) =>
+                    axios.get(`${import.meta.env.VITE_BACKEND_URL}core/playlists/${id}/`)
+                );
+                const playlistsData = await Promise.all(playlistsPromises);
+
+                const compositionsPromises = compositionIds.map((id) =>
+                    axios.get(`${import.meta.env.VITE_BACKEND_URL}core/compositions/${id}/`)
+                );
+                const compositionsData = await Promise.all(compositionsPromises);
+
+                setPlaylists(playlistsData.map((response) => response.data));
+                setCompositions(compositionsData.map((response) => response.data));
+            } catch (error) {
+                console.error("Error fetching user data:", error);
+            } finally {
                 setLoading(false);
-            });
+            }
+        };
+
+        fetchUserData();
     }, []);
 
     if (loading) {
@@ -80,47 +88,61 @@ const Library = () => {
                     </div>
                 </CardHeader>
                 <CardBody className="text-center">
-                    {isEmptyPlaylists === true ? (
-                        <div className="flex flex-col text-left p-6 shadowFull">
-                            <Typography className="mb-2" variant="h5" color="white">
-                                Create your playlist
-                            </Typography>
-                            <Typography className="mb-2 ml-2" variant="h7">
-                                We will help you
-                            </Typography>
-                            <Button
-                                onClick={() => navigate(isLoggedIn ? "/user/createPlaylist" : "/login")}
-                                className="w-56"
-                                color="white"
-                            >
-                                Create playlist
-                            </Button>
-                        </div>
-                    ) : (
-                        <div className="flex flex-col gap-4">
-                            {playlists.map((playlist) => (
-                                <div key={playlist.id} className="p-4 border rounded-md shadow-sm bg-white">
-                                    <Typography variant="h5">{playlist.name}</Typography>
-                                    <Typography className="text-gray-600">{playlist.description}</Typography>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                    <div className="flex flex-col text-left p-6 shadowFull">
-                        <Typography className="mb-2" variant="h5" color="white">
-                            Create your song
-                        </Typography>
-                        <Typography className="mb-2 ml-2" variant="h7">
-                            We will help you
-                        </Typography>
+                    <div className="flex flex-row justify-between shadowFull">
                         <Button
-                            onClick={() => navigate(isLoggedIn ? "/user/createSong" : "/login")}
-                            className="w-56"
+                            onClick={() => navigate(isLoggedIn ? "/user/createPlaylist" : "/login")}
+                            className="w-56 m-2"
                             color="white"
                         >
-                            Create song
+                            Create playlist
+                        </Button>
+                        <Button
+                            onClick={() => navigate(isLoggedIn ? "/user/createSong" : "/login")}
+                            className="w-56 m-2"
+                            color="white"
+                        >
+                            Create composition
                         </Button>
                     </div>
+                    <div className="flex flex-col gap-4 max-h-[255px] overflow-y-auto"
+                        style={{
+                            maxWidth: "100%",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#ffffff #2d3748",
+                        }}>
+                        {playlists.reverse().map((playlist) => (
+                            <div key={playlist.id} className="p-4 my-1 rounded-md bg-gray-800">
+                                <Typography variant="h5" className="text-white">{playlist.name}</Typography>
+                                <Typography className="text-gray-400">{playlist.description}</Typography>
+                                <Link
+                                    to={`/playlist/${playlist.id}`}
+                                    className="hover:underline text-blue-400"
+                                    style={{
+                                        fontFamily: "Arsenal",
+                                        transform: "translateY(-50%)",
+                                    }}
+                                >
+                                    Show all
+                                </Link>
+                            </div>
+
+                        ))}
+                    </div>
+                    <div
+                        className="text-center grid grid-cols-3 gap-4 justify-items-center overflow-y-auto overflow-x-hidden"
+                        style={{
+                            maxWidth: "100%",
+                            scrollbarWidth: "thin",
+                            scrollbarColor: "#ffffff #2d3748",
+                        }}
+                    >
+                        {compositions.map((composition) => (
+                            <div key={composition.id} className="ml-4 p-4">
+                                <Composition compositionId={composition.id} playlistId={"none"} />
+                            </div>
+                        ))}
+                    </div>
+
                 </CardBody>
                 <CardFooter className="flex justify-center gap-7 pt-2"></CardFooter>
             </Card>
@@ -173,8 +195,12 @@ const Playlist = ({ id, name }) => {
             .catch((error) => console.error(`Error fetching compositions for playlist ${id}:`, error));
     }, [id]);
 
+    if (compositions.length === 0) {
+        return null;
+    }
+
     return (
-        <div>
+        <div className="relative my-4">
             <div className="relative">
                 <Typography variant="h6" className="text-white text-left ml-6">
                     {name.length > 20 ? `${name.slice(0, 20)}...` : name}
@@ -195,18 +221,18 @@ const Playlist = ({ id, name }) => {
             </div>
             <div
                 className="text-center flex flex-row justify-start overflow-x-scroll overflow-y-hidden"
-                style={{ maxWidth: "100%", whiteSpace: "nowrap",scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}
+                style={{ maxWidth: "100%", whiteSpace: "nowrap", scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}
             >
                 {compositions.map((composition) => (
                     <div key={composition.id} className="inline-block mx-2">
-                        <Composition compositionId={composition.id} />
+                        <Composition compositionId={composition.id} playlistId={id} />
                     </div>
                 ))}
             </div>
-
         </div>
     );
 };
+
 
 
 const Home = () => {
@@ -214,10 +240,10 @@ const Home = () => {
         <div>
             <div className="intro back1">
                 <div className="flex flex-row w-full">
-                    <div className="w-1/3 h-full p-6">
+                    <div className="w-1/3 h-full p-3">
                         <Library />
                     </div>
-                    <div className="w-2/3 h-full p-6">
+                    <div className="w-2/3 h-full p-3">
                         <Playlists />
                     </div>
                 </div>

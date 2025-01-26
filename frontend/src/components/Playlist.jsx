@@ -54,7 +54,7 @@ const Playlist = () => {
                         <div className="w-24 h-24 mr-6">
                             {playlistIcon ? (
                                 <img
-                                    src={`http://127.0.0.1:8000/images/playlists${playlistIcon}`}
+                                    src={`http://127.0.0.1:8000${playlistIcon}`}
                                     alt="Playlist Icon"
                                     className="rounded-full object-cover w-full h-full"
                                 />
@@ -90,7 +90,7 @@ const Playlist = () => {
                                         </Typography>
                                     ) : (
                                         compositions.map((composition) => (
-                                            <Composition compositionId={composition.id} />
+                                            <Composition compositionId={composition.id} playlistId={playlistId} />
                                         ))
                                     )}
                                 </div>

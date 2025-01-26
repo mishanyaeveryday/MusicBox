@@ -163,7 +163,6 @@ export function NavbarDark() {
             <MenuList>
               <MenuItem onClick={() => handleLanguageChange("ENG")}>English</MenuItem>
               <MenuItem onClick={() => handleLanguageChange("POL")}>Polski</MenuItem>
-              <MenuItem onClick={() => handleLanguageChange("UA")}>Українська</MenuItem>
             </MenuList>
           </Menu>
         </div>
