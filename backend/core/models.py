@@ -72,7 +72,7 @@ class Playlist(models.Model):
     name = models.CharField(max_length=30, default='')
     compositions = models.ManyToManyField('Composition', blank=True)
     image = models.ImageField(
-        upload_to='images/cover/', blank=True, max_length=100)
+        upload_to='images/cover/', blank=True, max_length=100, default='images/cover/default_playlist.png')
     description = models.TextField()
 
     def __str__(self):
@@ -88,6 +88,7 @@ class Composition(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user_id = models.ForeignKey(get_user_model(), on_delete=models.CASCADE)
     name = models.CharField(max_length=30, default='')
+    is_premium = models.BooleanField(default=False)
     category = models.CharField(
         max_length=12,
         default='',
@@ -95,7 +96,7 @@ class Composition(models.Model):
     )
     text = models.TextField()
     image = models.ImageField(
-        upload_to='images/cover/', blank=True, max_length=100)
+        upload_to='images/cover/', blank=True, max_length=100, default='images/cover/default_composition.png')
     style = models.CharField(max_length=255, default='')
     audio_file = models.FileField(upload_to='audio/')
     playlist_id = models.ManyToManyField(
