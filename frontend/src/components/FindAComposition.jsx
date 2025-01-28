@@ -12,7 +12,7 @@ const SearchMusic = () => {
     const [filteredPlaylists, setFilteredPlaylists] = useState([]);
     const [compositions, setCompositions] = useState([]);
     const [filteredCompositions, setFilteredCompositions] = useState([]);
-    const navigate = useNavigate();  
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -93,31 +93,31 @@ const SearchMusic = () => {
                             >
                                 {filteredPlaylists.length > 0 ? (
                                     <div className="flex flex-col gap-4"
-                                    style={{ scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}>
+                                        style={{ scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}>
                                         {filteredPlaylists.map((playlist) => (
                                             <div
-                                            key={playlist.id}
-                                            className="p-4 rounded-md shadowFull flex flex-col justify-between"
-                                        >
-                                            <Typography variant="h6" className="mb-2 text-center text-white">
-                                                {playlist.name}
-                                            </Typography>
-                                        
-                                            <Typography className="text-gray-600 mb-4">
-                                                {playlist.description || "No description provided."}
-                                            </Typography>
-                                        
-                                            <Link
-                                                to={`/playlist/${playlist.id}`}
-                                                className="text-white hover:underline mt-auto"
-                                                style={{
-                                                    fontFamily: "Arsenal",
-                                                    textAlign: "center",
-                                                }}
+                                                key={playlist.id}
+                                                className="p-4 rounded-md shadowFull flex flex-col justify-between"
                                             >
-                                                Show all
-                                            </Link>
-                                        </div>
+                                                <Typography variant="h6" className="mb-2 text-center text-white">
+                                                    {playlist.name}
+                                                </Typography>
+
+                                                <Typography className="text-gray-600 mb-4">
+                                                    {playlist.description || "No description provided."}
+                                                </Typography>
+
+                                                <Link
+                                                    to={`/playlist/${playlist.id}`}
+                                                    className="text-white hover:underline mt-auto"
+                                                    style={{
+                                                        fontFamily: "Arsenal",
+                                                        textAlign: "center",
+                                                    }}
+                                                >
+                                                    Show all
+                                                </Link>
+                                            </div>
                                         ))}
                                     </div>
                                 ) : (
@@ -137,7 +137,7 @@ const SearchMusic = () => {
                                 style={{ scrollbarWidth: "thin", scrollbarColor: "#ffffff #2d3748" }}
                             >
                                 {filteredCompositions.length > 0 ? (
-                                    <div className="grid grid-cols-4 gap-6">
+                                    <div className="grid grid-cols-3 gap-4">
                                         {filteredCompositions.map((composition) => (
                                             <Composition compositionId={composition.id} playlistId={"none"} />
                                         ))}

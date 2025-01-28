@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Card, CardBody, CardFooter, Typography, IconButton } from "@material-tailwind/react";
 import { PlusIcon } from "@heroicons/react/24/solid";
+
 
 const AddToPlaylist = () => {
     const [playlists, setPlaylists] = useState([]);
     const [selectedCompositionId, setSelectedCompositionId] = useState(null);
     const [loading, setLoading] = useState(true);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const compositionId = localStorage.getItem("selectedCompositionId");
@@ -80,6 +83,7 @@ const AddToPlaylist = () => {
             );
 
             alert("Composition added to playlist successfully!");
+            navigate("/");
         } catch (error) {
             console.error("Error adding composition to playlist:", error);
             alert("Failed to add composition to playlist.");

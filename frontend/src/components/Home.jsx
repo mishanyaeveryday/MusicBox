@@ -129,7 +129,7 @@ const Library = () => {
                         ))}
                     </div>
                     <div
-                        className="text-center grid grid-cols-3 gap-4 justify-items-center overflow-y-auto overflow-x-hidden"
+                        className="text-center grid grid-cols-2 gap-4 max-h-[410px] justify-items-center overflow-y-auto overflow-x-hidden"
                         style={{
                             maxWidth: "100%",
                             scrollbarWidth: "thin",
