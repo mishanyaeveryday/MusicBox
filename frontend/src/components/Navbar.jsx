@@ -15,7 +15,7 @@ import admin from '../assets/images/admin-panel.png';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } from "@heroicons/react/24/solid";
+import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon, WrenchIcon, WrenchScrewdriverIcon } from "@heroicons/react/24/solid";
 
 export function NavbarDark() {
   const [language, setLanguage] = useState("ENG");
@@ -128,21 +128,28 @@ export function NavbarDark() {
             </IconButton>
           </div>
           <div className="flex gap-1 md:ml-4">
-            <Badge content="" color="indigo">
-              <IconButton onClick={() => {
-                if (isLoggedIn) {
-                  navigate("/user/notifications");
-                } else {
-                  navigate("/login");
-                }
-              }} variant="text" color="white">
-                <BellIcon className="h-8 w-8" />
+            <IconButton onClick={() => {
+              if (isLoggedIn) {
+                navigate("/user/notifications");
+              } else {
+                navigate("/login");
+              }
+            }} variant="text" color="white">
+              <BellIcon className="h-8 w-8" />
+            </IconButton>
+            {isAdmin && (
+              <IconButton
+                onClick={() => window.location.href = "http://127.0.0.1:8000/admin/"}
+                variant="text" color="white"
+              >
+                <WrenchScrewdriverIcon className="h-8 w-8" />
               </IconButton>
-            </Badge>
+            )}
           </div>
         </div>
 
         <div className="flex flex-wrap items-center justify-center gap-y-4 text-white">
+
           <div className="flex gap-1 md:mx-1">
             {isLoggedIn ? (
               <img
@@ -158,20 +165,6 @@ export function NavbarDark() {
             )}
           </div>
 
-          {isAdmin && (
-            <IconButton
-              variant="standard"
-              color="blue"
-              onClick={() => window.location.href = "http://127.0.0.1:8000/admin/"}
-              className="ml-4 flex items-center gap-2"
-            >
-              <img
-                src={admin}
-                alt="Admin"
-                className="h-5 w-5"
-              />
-            </IconButton>
-          )}
 
           <Menu>
             <MenuHandler>
@@ -187,7 +180,7 @@ export function NavbarDark() {
           </Menu>
         </div>
       </div>
-    </Navbar>
+    </Navbar >
   );
 }
 
