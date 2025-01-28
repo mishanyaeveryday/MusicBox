@@ -8,6 +8,7 @@ import {
     IconButton,
     Tooltip,
     Input,
+    Button,
 } from "@material-tailwind/react";
 import { PencilIcon, UserIcon } from "@heroicons/react/24/solid";
 import axios from "axios";
@@ -17,7 +18,7 @@ const api = axios.create({
 });
 
 const UserPage = () => {
-    const [userData, setUserData] = useState({ username: "", email: "",avatar:""});
+    const [userData, setUserData] = useState({ username: "", email: "", avatar: "" });
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -33,13 +34,20 @@ const UserPage = () => {
             setUserData({
                 username: data.username || "",
                 email: data.email || "",
-                avatar:data.avatar || "/images/default_avatar.png",
+                avatar: data.avatar || "/images/default_avatar.png",
             });
         } catch (error) {
             console.error("Error fetching user data:", error);
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const handleLogout = () => {
+        // Удаляем данные пользователя из localStorage
+        localStorage.removeItem("userId");
+        // Перенаправляем на страницу входа
+        navigate("/login");
     };
 
     const updateUserData = async (field, value) => {
@@ -63,6 +71,7 @@ const UserPage = () => {
             alert(`Failed to update ${field}.`);
         }
     };
+
     const handleFileUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
@@ -86,7 +95,6 @@ const UserPage = () => {
             }
         }
     };
-    
 
     const handleEdit = (field, value) => {
         setUserData((prev) => ({ ...prev, [field]: value }));
@@ -144,6 +152,13 @@ const UserPage = () => {
                         placeholder="Email"
                         className="mb-2 w-full"
                     />
+                    <Button
+                        color="red"
+                        onClick={handleLogout}
+                        className="w-full mt-4"
+                    >
+                        Logout
+                    </Button>
                 </CardBody>
             </Card>
         </div>

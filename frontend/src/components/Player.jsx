@@ -1,9 +1,11 @@
 import React, { useRef, useState } from "react";
 import { Card, Typography } from "@material-tailwind/react";
+import { Button, IconButton } from "@material-tailwind/react";
 import { usePlayer } from "./PlayerContext";
 import AudioPlayer from 'react-h5-audio-player';
 import "react-h5-audio-player/lib/styles.css";
 import '../design/Player.css';
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const PlayerWrapper = () => {
   const { isVisible, currentSong, closePlayer } = usePlayer();
@@ -21,6 +23,11 @@ const PlayerWrapper = () => {
   return (
     <div className="rounded-xl fixed bottom-0 left-0 w-full shadowHalf text-white z-50">
       <Card className="rounded-xl flex flex-col items-center justify-between px-6 py-4 shadowFull w-full text-white">
+        <div className="absolute top-2 right-2">
+          <IconButton color="red" size="sm" onClick={closePlayer}>
+            <XMarkIcon className="h-8 w-8"/>
+          </IconButton>
+        </div>
         <div className="m-2 w-full">
           <Typography variant="h4" className="text-center">{currentSong.title || "No Song Selected"}</Typography>
         </div>

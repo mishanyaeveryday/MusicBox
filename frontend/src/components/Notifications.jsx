@@ -41,10 +41,10 @@ const Notifications = () => {
 
     return (
         <div className="intro back1">
-            <div className="container mx-auto max-w-3xl">
-                <Card className="shadow-lg rounded-xl bg-white">
-                    <CardHeader floated={false} className="bg-gradient-to-r from-orange-500 to-orange-600 text-white text-center py-4 rounded-t-xl">
-                        <Typography variant="h3" className="font-bold text-3xl">
+            <div className="mx-auto max-w-3xl">
+                <Card  className="shadowHalf">
+                    <CardHeader floated={false}  className="bg-0">
+                        <Typography variant="h3" color="white">
                             Notifications
                         </Typography>
                     </CardHeader>
@@ -71,8 +71,8 @@ const Notifications = () => {
 
 const NotificationCard = ({ data }) => {
     return (
-        <div className="p-6 bg-orange-50 border-2 border-orange-200 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300 ease-in-out">
-            <Typography variant="h5" className="font-semibold text-xl mb-3 text-orange-700">
+        <div className="p-6 shadowFull">
+            <Typography variant="h5" className="font-semibold text-xl mb-3">
                 {data.title}
             </Typography>
             <Typography className="text-gray-700 text-base mb-4">
@@ -82,7 +82,7 @@ const NotificationCard = ({ data }) => {
                 <Typography variant="caption" className="text-gray-500 text-sm">
                     {new Date(data.date).toLocaleString()}
                 </Typography>
-                <div className="w-2.5 h-2.5 rounded-full bg-orange-500"></div>
+                <div className="w-2.5 h-2.5 rounded-full"></div>
             </div>
         </div>
     );
