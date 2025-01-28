@@ -11,6 +11,7 @@ import {
 } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 import icon from '../assets/images/icon.png';
+import admin from '../assets/images/admin-panel.png';
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
@@ -19,6 +20,7 @@ import { BellIcon, ChevronDownIcon, HomeIcon, MagnifyingGlassIcon, UserIcon } fr
 export function NavbarDark() {
   const [language, setLanguage] = useState("ENG");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [userPhoto, setUserPhoto] = useState("");
   const token = localStorage.getItem('token');
@@ -45,6 +47,7 @@ export function NavbarDark() {
         if (userResponse && userResponse.data) {
           setIsLoggedIn(true);
           setUserPhoto(userResponse.data.avatar || "/images/default_avatar.png");
+          setIsAdmin(userResponse.data.is_superuser);
         }
       } catch (error) {
         console.error("Error during token validation or user fetching:", error);
@@ -154,6 +157,22 @@ export function NavbarDark() {
               </IconButton>
             )}
           </div>
+
+          {isAdmin && (
+            <IconButton
+              variant="standard"
+              color="blue"
+              onClick={() => window.location.href = "http://127.0.0.1:8000/admin/"}
+              className="ml-4 flex items-center gap-2"
+            >
+              <img
+                src={admin}
+                alt="Admin"
+                className="h-5 w-5"
+              />
+            </IconButton>
+          )}
+
           <Menu>
             <MenuHandler>
               <Button variant="text" color="blue-gray" className="flex items-center gap-1">

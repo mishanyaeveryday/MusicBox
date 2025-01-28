@@ -1,6 +1,8 @@
 from typing import Any
 from django.db import models
 from django.contrib.auth.models import UserManager, AbstractBaseUser, PermissionsMixin
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.contrib.auth import get_user_model
 import uuid
@@ -64,6 +66,15 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def get_name(self):
         return self.name
+
+
+@receiver(post_save, sender=User)
+def make_first_user_superuser(sender, instance, created, **kwargs):
+    if created and User.objects.count() == 1:
+        instance.is_superuser = True
+        instance.is_staff = True
+        instance.save()
+        print(f"User {instance.username} is now a superuser!")
 
 
 class Playlist(models.Model):
