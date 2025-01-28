@@ -27,7 +27,8 @@ export function NavbarDark() {
 
   useEffect(() => {
     const checkToken = async () => {
-      if (!token) { console.log("token");
+      if (!token) {
+        console.log("token");
         setIsLoggedIn(false);
         return;
       }
@@ -55,14 +56,14 @@ export function NavbarDark() {
   }, [token]);
 
   const validateToken = async (token) => {
-    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token`, {
+    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}core/token/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
     return response.data.valid;
   };
 
   const fetchUserData = async (userId, token) => {
-    return axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}`, {
+    return axios.get(`${import.meta.env.VITE_BACKEND_URL}core/users/${userId}/`, {
       headers: { Authorization: `Bearer ${token}` },
     });
   };
@@ -103,7 +104,7 @@ export function NavbarDark() {
             </IconButton>
           </div>
           <div className="relative flex w-full gap-2 md:w-max">
-          <Input
+            <Input
               type="search"
               color="white"
               label="What you want to listen?"

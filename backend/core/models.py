@@ -114,6 +114,7 @@ class Notification(models.Model):
         upload_to='images/notifications/', blank=True, max_length=100)
     users = models.ManyToManyField(
         User, blank=True)
+    date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
