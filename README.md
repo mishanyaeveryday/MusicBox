@@ -3,10 +3,12 @@
 MusicBox is a web application for managing and listening to music playlists. Users can create playlists, add songs, and explore compositions by different artists.
 
 ## Features
-- User authentication and role-based access control
-- Create, edit, and delete playlists
+- User authentication with JWT tokens for secure login
+- One-time code sent to email for account login
+- Role-based access control
+- Create, edit, and delete compositions and playlists
 - Add songs to playlists
-- Search for compositions
+- Search for compositions and playlists
 - View author details and compositions
 - Receive notifications
 
