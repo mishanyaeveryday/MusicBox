@@ -18,6 +18,8 @@ from rest_framework.exceptions import NotFound
 import random
 import datetime
 from django.views.decorators.csrf import csrf_exempt
+from allauth.socialaccount.providers.google.views import GoogleOAuth2Adapter
+from allauth.socialaccount.models import SocialApp
 # Create your views here.
 
 
@@ -217,7 +219,8 @@ def playlist_detail(request, pk):
             return Response(serializer.data)
         return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
     elif request.method == 'PATCH':
-        serializer = PlaylistSerializer(playlist, data=request.data, partial=True)
+        serializer = PlaylistSerializer(
+            playlist, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -301,7 +304,8 @@ def composition_detail(request, pk):
             return Response(serializer.data)
         return Response(serializer.errors, status=status. HTTP_400_BAD_REQUEST)
     elif request.method == 'PATCH':
-        serializer = CompositionSerializer(composition, data=request.data, partial=True)
+        serializer = CompositionSerializer(
+            composition, data=request.data, partial=True)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
